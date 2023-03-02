@@ -1,0 +1,18 @@
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:18:1:core_debug_Interface::core_debug_Interface(debug_interface_type, UART_HandleTypeDef*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:34:6:void core_debug_Interface::registerCallback(core_debug_CB_ID, void (*)(void*, void*), void*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:40:6:void core_debug_Interface::start()	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:47:6:void core_debug_Interface::write(uint8_t*, uint16_t)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:60:6:void core_debug_Interface::print(uint8_t*, uint16_t)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:64:6:void core_debug_Interface::println(uint8_t*, uint16_t)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:69:6:void core_debug_Interface::println()	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:74:6:void core_debug_Interface::print(float)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:78:6:void core_debug_Interface::print(uint8_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:82:6:void core_debug_Interface::print(uint16_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:93:6:void print(const char*, uint16_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:99:6:void print(uint8_t*, uint16_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:104:6:void println(const char*, uint16_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:110:6:void println(uint8_t*, uint16_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:115:6:void println()	8	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:120:6:void print(float)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:123:6:void print(uint8_t)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_debug.cpp:126:6:void print(uint16_t)	16	static

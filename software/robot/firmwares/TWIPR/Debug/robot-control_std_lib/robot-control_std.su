@@ -1,0 +1,8 @@
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/ext/madgwick_ahrs/MadgwickAHRS.h:38:10:void Madgwick::begin(float)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:35:6:void robot_control_init()	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:47:6:void robot_control_start()	8	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:54:6:void robot_control_task(void*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:66:6:void robot_control_sensor_task(void*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:92:6:void robot_control_loop()	4	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:94:1:void __static_initialization_and_destruction_0(int, int)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/robot-control_std_lib/robot-control_std.cpp:94:1:cpp)	8	static
