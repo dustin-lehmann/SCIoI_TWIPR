@@ -28,7 +28,7 @@
 #define SIMPLEXMOTION_REG_STATUS 409
 #define SIMPLEXMOTION_REG_ERROR 414
 
-typedef enum simplexmotion_mode {
+typedef enum simplexmotion_mode_t {
 	SIMPLEXMOTION_MODE_OFF = 0,
 	SIMPLEXMOTION_MODE_RESET = 1,
 	SIMPLEXMOTION_MODE_TORQUE = 40,
@@ -37,7 +37,7 @@ typedef enum simplexmotion_mode {
 	SIMPLEXMOTION_MODE_QUICKSTOP = 5,
 	SIMPLEXMOTION_MODE_BEEP = 60,
 	SIMPLEXMOTION_MODE_COGGING = 110,
-} simplexmotion_mode;
+} simplexmotion_mode_t;
 
 typedef enum simplexmotion_error {
 	SIMPLEXMOTION_ERROR_INTERNAL_GENERAL = 0x0001,
@@ -56,7 +56,7 @@ typedef enum simplexmotion_error {
 	SIMPLEXMOTION_ERROR_EXTERNAL_CONNECTION = 0x8001 // my own error code
 } simplexmotion_error;
 
-typedef struct simplexmotion_status {
+typedef struct simplexmotion_status_t {
 	uint8_t fail;
 	uint8_t communication_error;
 	uint8_t current_error;
@@ -68,7 +68,7 @@ typedef struct simplexmotion_status {
 	uint8_t locked;
 	uint8_t reverse;
 	uint8_t target;
-} simplexmotion_status;
+} simplexmotion_status_t;
 
 typedef enum simplexmotion_callback_id {
 	SIMPLEXMOTION_CB_ERROR = 0,
@@ -78,16 +78,22 @@ typedef struct simplexmotion_callbacks {
 	core_utils_Callback error;
 } simplexmotion_callbacks;
 
+typedef struct simplexmotion_config_t {
+	uint8_t id;
+	int8_t direction;
+	ModbusMaster *modbus;
+} simplexmotion_config_t;
+
 class SimplexMotionMotor {
 
 public:
 	SimplexMotionMotor();
 
-	uint8_t init(uint8_t id, int8_t direction, ModbusMaster *modbus);
-	void start(simplexmotion_mode mode);
+	uint8_t init(simplexmotion_config_t config);
+	void start(simplexmotion_mode_t mode);
 
 	void registerCallback(simplexmotion_callback_id callback_id,
-			void (*callback)(void *argument, void* params),  void *params);
+			void (*callback)(void *argument, void *params), void *params);
 
 	uint8_t writeRegisters(uint16_t address, uint16_t num_registers,
 			uint16_t *data);
@@ -108,7 +114,7 @@ public:
 	float getTemperature();
 	float getVoltage();
 
-	uint8_t getStatus(simplexmotion_status* status);
+	uint8_t getStatus(simplexmotion_status_t *status);
 
 	uint8_t readError();
 	uint32_t readTime();
@@ -122,13 +128,12 @@ public:
 	uint8_t readName();
 	uint8_t setAddress(uint8_t address);
 
-	uint8_t setMode(simplexmotion_mode mode);
-	simplexmotion_mode readMode();
+	uint8_t setMode(simplexmotion_mode_t mode);
+	simplexmotion_mode_t readMode();
 	uint8_t emergencyStop();
 	uint8_t stop();
 	uint8_t beep(uint16_t amplitude);
 	uint8_t reset();
-
 
 	uint16_t mode;
 
@@ -137,10 +142,6 @@ private:
 	simplexmotion_callbacks callbacks;
 	uint16_t rx_buffer[8];
 	uint16_t tx_buffer[8];
-	ModbusMaster *modbus;
-
-	uint8_t id;
-	int8_t direction;
 
 	uint8_t connected;
 	simplexmotion_error last_error;
@@ -152,6 +153,7 @@ private:
 	uint8_t _init = 0;
 	uint8_t _checked = 0;
 	uint8_t _ready = 0;
+	simplexmotion_config_t _config;
 };
 
 #endif /* ROBOT_SIMPLEXMOTION_MOTORS_SIMPLEXMOTION_HPP_ */

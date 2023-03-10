@@ -72,7 +72,4 @@ uint8_t core_comm_Message_Decode(uint8_t *buffer, uint16_t len,
 		core_comm_Message_t *msg);
 uint8_t core_comm_Message_Encode(core_comm_Message_t *msg, uint8_t *buffer);
 
-///* Message handling for the core module */
-//uint8_t core_comm_msg_MessageHandler(core_comm_Message_t *msg);
-//uint8_t core_comm_msg_MessageHandlerWrite(core_comm_Message_t *msg);
 #endif /* COMMUNICATION_CORE_MESSAGES_H_ */

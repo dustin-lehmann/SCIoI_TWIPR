@@ -9,38 +9,27 @@
 
 #if CORE_CONFIG_USE_SPI
 
-BMI160::BMI160(SPI_HandleTypeDef *hspi, GPIO_TypeDef *GPIOx,
-		uint16_t GPIO_Pin) {
-	this->hspi = hspi;
-	this->CS_GPIOx = GPIOx;
-	this->CS_Pin = GPIO_Pin;
-}
+BMI160::BMI160(){
 
-/* ============================================================================= */
-BMI160::BMI160(SPI_HandleTypeDef *hspi, GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin,
-		bmi160_config config) {
-	this->hspi = hspi;
-	this->config = config;
-	this->CS_GPIOx = GPIOx;
-	this->CS_Pin = GPIO_Pin;
 }
 
 /* ============================================================================= */
 uint8_t BMI160::writeRegister(uint8_t reg, uint8_t data) {
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(this->hspi, &reg, 1, 1);
-	HAL_SPI_Transmit(this->hspi, &data, 1, 1);
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(this->_config.hspi, &reg, 1, 1);
+	HAL_SPI_Transmit(this->_config.hspi, &data, 1, 1);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_SET);
 
 	return CORE_OK;
 }
 
 /* ============================================================================= */
-uint8_t BMI160::init() {
+uint8_t BMI160::init(bmi160_config_t config) {
 
+	this->_config = config;
 	// Make a dummy read to turn on SPI mode
 //	this->readRegister(0x7F);
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_SET);
 	delay(250);
 
 	// Check if the IMU can be addressed
@@ -62,12 +51,12 @@ uint8_t BMI160::init() {
 	this->setPowerMode(BMI160_Power_Normal);
 
 	// Set the accelerometer setting
-	this->setAccConfig(this->config.acc.odr | this->config.acc.bw,
-			this->config.acc.range);
+	this->setAccConfig(this->_config.acc.odr | this->_config.acc.bw,
+			this->_config.acc.range);
 
 	// Set the gyroscope setting
-	this->setGyroConfig(this->config.gyr.odr | this->config.gyr.bw,
-			this->config.gyr.range);
+	this->setGyroConfig(this->_config.gyr.odr | this->_config.gyr.bw,
+			this->_config.gyr.range);
 
 	// Check if the settings have been set correctly
 
@@ -76,16 +65,16 @@ uint8_t BMI160::init() {
 	uint8_t gyr_config_reg = this->readRegister(BMI160_REG_GYRO_CONFIG);
 	uint8_t gyr_range_reg = this->readRegister(BMI160_REG_GYRO_RANGE);
 
-	if (acc_config_reg != (this->config.acc.odr | this->config.acc.bw)) {
+	if (acc_config_reg != (this->_config.acc.odr | this->_config.acc.bw)) {
 		core_ErrorHandler(CORE_ERROR_HARDWARE_IMU);
 	}
-	if (acc_range_reg != this->config.acc.range) {
+	if (acc_range_reg != this->_config.acc.range) {
 		core_ErrorHandler(CORE_ERROR_HARDWARE_IMU);
 	}
-	if (gyr_config_reg != (this->config.gyr.odr | this->config.gyr.bw)) {
+	if (gyr_config_reg != (this->_config.gyr.odr | this->_config.gyr.bw)) {
 		core_ErrorHandler(CORE_ERROR_HARDWARE_IMU);
 	}
-	if (gyr_range_reg != this->config.gyr.range) {
+	if (gyr_range_reg != this->_config.gyr.range) {
 		core_ErrorHandler(CORE_ERROR_HARDWARE_IMU);
 	}
 
@@ -97,10 +86,10 @@ uint8_t BMI160::readRegister(uint8_t reg) {
 	uint8_t ret = 0;
 	reg |= 0x80;
 
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(this->hspi, &reg, 1, 10);
-	HAL_SPI_Receive(this->hspi, &ret, 1, 10);
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(this->_config.hspi, &reg, 1, 10);
+	HAL_SPI_Receive(this->_config.hspi, &ret, 1, 10);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_SET);
 
 	return ret;
 }
@@ -110,10 +99,10 @@ uint8_t BMI160::readMultipleRegister(uint8_t reg, uint8_t *data, uint8_t len) {
 //	reg += 0x80;
 	reg |= 0x80;
 
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(this->hspi, &reg, 1, 1);
-	HAL_SPI_Receive(this->hspi, data, len, 10);
-	HAL_GPIO_WritePin(this->CS_GPIOx, this->CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(this->_config.hspi, &reg, 1, 1);
+	HAL_SPI_Receive(this->_config.hspi, data, len, 10);
+	HAL_GPIO_WritePin(this->_config.CS_GPIOx, this->_config.CS_GPIO_Pin, GPIO_PIN_SET);
 
 	return CORE_OK;
 }
@@ -152,7 +141,7 @@ uint8_t BMI160::fetchData() {
 uint8_t BMI160::processData() {
 
 	// Gyroscope
-	switch (this->config.gyr.range) {
+	switch (this->_config.gyr.range) {
 	case BMI160_GYRO_RANGE_125_DPS: {
 		this->gyr.x = deg2rad(this->gyr_raw.x / 32768.0 * 125.0)
 				- this->gyr_calib.x;
@@ -201,7 +190,7 @@ uint8_t BMI160::processData() {
 	}
 
 	// Accelerometer
-	switch (this->config.acc.range) {
+	switch (this->_config.acc.range) {
 	case BMI160_ACCEL_RANGE_2G: {
 		this->acc.x = this->acc_raw.x / 32768.0 * 2.0 * 9.81;
 		this->acc.y = this->acc_raw.y / 32768.0 * 2.0 * 9.81;
@@ -309,13 +298,13 @@ void BMI160::fastOffsetCalibration() {
 	// Configure the FOC register
 	uint8_t foc_data = 0;
 
-	if (this->config.gyr.foc_enable) {
+	if (this->_config.gyr.foc_enable) {
 		foc_data = BMI160_FOC_GYRO_ENABLE;
 	} else {
 		foc_data = BMI160_FOC_GYRO_DISABLE;
 	}
 
-	if (this->config.acc.foc_enable) {
+	if (this->_config.acc.foc_enable) {
 		core_ErrorHandler(5);
 	}
 

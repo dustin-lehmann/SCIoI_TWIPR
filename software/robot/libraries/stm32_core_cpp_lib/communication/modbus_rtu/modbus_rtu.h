@@ -31,7 +31,6 @@
 uint16_t calcCRC(uint8_t *Buffer, uint8_t u8length);
 uint16_t word(uint8_t H, uint8_t L);
 
-
 enum {
 	EXC_FUNC_CODE = 1, EXC_ADDR_RANGE = 2, EXC_REGS_QUANT = 3, EXC_EXECUTE = 4
 };
@@ -102,13 +101,18 @@ typedef struct {
 	uint32_t *u32CurrentTask; /*!< Pointer to the task that will receive notifications from Modbus */
 } modbus_query_t;
 
+typedef struct modbus_config_t {
+	UART_HandleTypeDef *huart;
+	GPIO_TypeDef *EN_GPIOx;
+	uint16_t EN_GPIO_Pin;
+	mb_hardware_t hardware;
+} modbus_config_t;
+
 class ModbusMaster {
 public:
 	ModbusMaster();
-	ModbusMaster(UART_HandleTypeDef *huart, mb_hardware_t hardware, GPIO_TypeDef *enablePort,
-			uint16_t enablePin);
 
-	void init();
+	void init(modbus_config_t config);
 	void start();
 
 	void setTimeOut(uint16_t u16timeOut);
@@ -119,10 +123,6 @@ public:
 	void query(modbus_query_t telegram, uint32_t *threadId); // Query with a specific task to notify
 	void queryInject(modbus_query_t telegram); //put a query in the queue head
 	void queryInject(modbus_query_t telegram, uint32_t *threadId);
-
-	UART_HandleTypeDef *huart;
-	GPIO_TypeDef *enableGpioPort;
-	uint16_t enableGpioPin;
 
 	int8_t lastError;
 	uint8_t u8Buffer[MODBUS_BUFFER_SIZE];
@@ -151,7 +151,7 @@ public:
 	// RX ring buffer for USART
 	core_utils_RingBuffer<128> xBufferRX;
 	// type of hardware  TCP, USB CDC, USART
-	mb_hardware_t xTypeHW;
+
 
 	int8_t sendQuery(modbus_query_t telegram);
 	int16_t getRxBuffer();
@@ -168,6 +168,7 @@ public:
 	int8_t process_FC15();
 	int8_t process_FC16();
 
+	modbus_config_t config;
 private:
 
 	void sendTxBuffer();

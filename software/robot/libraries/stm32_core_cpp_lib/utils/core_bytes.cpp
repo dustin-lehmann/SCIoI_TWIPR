@@ -14,6 +14,11 @@ float bytearray_to_float(uint8_t *bytearray) {
 	return *((float*) &temp);
 }
 
+uint16_t uint8_to_uint16(uint8_t byte1, uint8_t byte2) {
+	uint16_t out = byte1 << 8 | byte2;
+	return out;
+}
+
 uint16_t bytearray_to_uint16(uint8_t *bytearray) {
 	uint16_t out = bytearray[1] << 8 | bytearray[0];
 	return out;

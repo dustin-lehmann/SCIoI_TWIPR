@@ -35,18 +35,10 @@ void uartTxCompleteDMA_callback(UART_HandleTypeDef *huart);
 ModbusMaster::ModbusMaster() {
 
 }
-
 /* ================================================================ */
-ModbusMaster::ModbusMaster(UART_HandleTypeDef *huart, mb_hardware_t hardware, GPIO_TypeDef *enablePort,
-		uint16_t enablePin) {
-	this->huart = huart;
-	this->enableGpioPort = enablePort;
-	this->enableGpioPin = enablePin;
-	this->xTypeHW = hardware; // TODO
-}
+void ModbusMaster::init(modbus_config_t config) {
 
-/* ================================================================ */
-void ModbusMaster::init() {
+	this->config = config;
 
 	if (num_handlers < MAX_MODBUS_HANDLERS) {
 
@@ -58,7 +50,7 @@ void ModbusMaster::init() {
 				&task_attributes);
 
 		//
-		this->u16timeOut = 1000;
+		this->u16timeOut = 250;
 		// Initialize the timeout timer
 		this->xTimerTimeout = xTimerCreate("xTimerTimeout", // Just a text name, not used by the kernel.
 				this->u16timeOut,     		// The timer period in ticks.
@@ -72,7 +64,8 @@ void ModbusMaster::init() {
 				; // TODO error creating timer, check heap and stack size
 		}
 
-		modbus_query_queue = osMessageQueueNew(MAX_TELEGRAMS, sizeof(modbus_query_t), NULL);
+		modbus_query_queue = osMessageQueueNew(MAX_TELEGRAMS,
+				sizeof(modbus_query_t), NULL);
 
 		if (modbus_query_queue == NULL) {
 			while (1)
@@ -117,44 +110,46 @@ void ModbusMaster::init() {
 /* ================================================================ */
 void ModbusMaster::start() {
 
-	if (this->enableGpioPort != NULL) {
+	if (this->config.EN_GPIOx != NULL) {
 		// Set RS485 Transmitter to transmit mode
-		HAL_GPIO_WritePin(enableGpioPort, enableGpioPin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(config.EN_GPIOx, config.EN_GPIO_Pin, GPIO_PIN_RESET);
 	}
 
 	// Wait until UART is ready
-	while (HAL_UART_GetState(this->huart) != HAL_UART_STATE_READY) {
+	while (HAL_UART_GetState(this->config.huart) != HAL_UART_STATE_READY) {
 
 	}
 
-	if (this->xTypeHW == MB_UART_IT) {
+	if (this->config.hardware == MB_UART_IT) {
 
 		// Register the callback for the UART Interrupt
-		HAL_UART_RegisterCallback(this->huart, HAL_UART_RX_COMPLETE_CB_ID,
-				uartRxCompleteIT_callback);
+		HAL_UART_RegisterCallback(this->config.huart,
+				HAL_UART_RX_COMPLETE_CB_ID, uartRxCompleteIT_callback);
 
 //		HAL_UART_RegisterCallback(this->huart, HAL_UART_TX_COMPLETE_CB_ID, uartTxCompleteIT_callback);
 
 		// Receive data from serial port for Modbus using interrupt
-		if (HAL_UART_Receive_IT(this->huart, &this->dataRX, 1) != HAL_OK) {
+		if (HAL_UART_Receive_IT(this->config.huart, &this->dataRX, 1)
+				!= HAL_OK) {
 			while (1) {
 				//error in your initialization code
 			}
 		}
-	} else if (this->xTypeHW == MB_UART_DMA) {
-		HAL_UART_RegisterRxEventCallback(this->huart,
+	} else if (this->config.hardware == MB_UART_DMA) {
+		HAL_UART_RegisterRxEventCallback(this->config.huart,
 				uartRxCompleteDMA_callback);
 
-		HAL_UART_RegisterCallback(this->huart, HAL_UART_TX_COMPLETE_CB_ID,
-				uartTxCompleteDMA_callback);
+		HAL_UART_RegisterCallback(this->config.huart,
+				HAL_UART_TX_COMPLETE_CB_ID, uartTxCompleteDMA_callback);
 
-		if (HAL_UARTEx_ReceiveToIdle_DMA(huart, this->xBufferRX.buffer,
-		MAX_BUFFER) != HAL_OK) {
+		if (HAL_UARTEx_ReceiveToIdle_DMA(this->config.huart,
+				this->xBufferRX.buffer,
+				MAX_BUFFER) != HAL_OK) {
 			while (1) {
 				//error in your initialization code
 			}
 		}
-		__HAL_DMA_DISABLE_IT(this->huart->hdmarx, DMA_IT_HT);
+		__HAL_DMA_DISABLE_IT(this->config.huart->hdmarx, DMA_IT_HT);
 	}
 
 	// Reset all statistics
@@ -311,7 +306,8 @@ void ModbusMaster::get_FC3() {
 	u8byte = 3;
 
 	for (i = 0; i < this->u8Buffer[2] / 2; i++) {
-		this->u16regs[ i ] = word(this->u8Buffer[ u8byte ], this->u8Buffer[ u8byte +1 ]);
+		this->u16regs[i] = word(this->u8Buffer[u8byte],
+				this->u8Buffer[u8byte + 1]);
 		u8byte += 2;
 //		this->u16regs[i] = this->u8Buffer[u8byte];
 //		u8byte += 1;
@@ -451,8 +447,8 @@ int16_t ModbusMaster::getRxBuffer() {
 
 	int16_t i16result;
 
-	if (this->xTypeHW == MB_UART_IT) {
-		HAL_UART_AbortReceive_IT(this->huart); // disable interrupts to avoid race conditions on serial port
+	if (this->config.hardware == MB_UART_IT) {
+		HAL_UART_AbortReceive_IT(this->config.huart); // disable interrupts to avoid race conditions on serial port
 	}
 
 	if (this->xBufferRX.overflow) {
@@ -464,8 +460,8 @@ int16_t ModbusMaster::getRxBuffer() {
 		i16result = this->u8BufferSize;
 	}
 
-	if (this->xTypeHW == MB_UART_IT) {
-		HAL_UART_Receive_IT(this->huart, &this->dataRX, 1);
+	if (this->config.hardware == MB_UART_IT) {
+		HAL_UART_Receive_IT(this->config.huart, &this->dataRX, 1);
 	}
 
 	return i16result;
@@ -482,20 +478,22 @@ void uartRxCompleteDMA_callback(UART_HandleTypeDef *huart, uint16_t size) {
 
 	int i;
 	for (i = 0; i < num_handlers; i++) {
-		if (handlers[i]->huart == huart) {
+		if (handlers[i]->config.huart == huart) {
 
-			if (handlers[i]->xTypeHW == MB_UART_DMA) {
+			if (handlers[i]->config.hardware == MB_UART_DMA) {
 				if (size) //check if we have received any byte
 				{
 					handlers[i]->xBufferRX.available = size;
 					handlers[i]->xBufferRX.overflow = false;
 
-					while (HAL_UARTEx_ReceiveToIdle_DMA(handlers[i]->huart,
+					while (HAL_UARTEx_ReceiveToIdle_DMA(
+							handlers[i]->config.huart,
 							handlers[i]->xBufferRX.buffer, MAX_BUFFER) != HAL_OK) {
-						HAL_UART_DMAStop(handlers[i]->huart);
+						HAL_UART_DMAStop(handlers[i]->config.huart);
 
 					}
-					__HAL_DMA_DISABLE_IT(handlers[i]->huart->hdmarx, DMA_IT_HT); // we don't need half-transfer interrupt
+					__HAL_DMA_DISABLE_IT(handlers[i]->config.huart->hdmarx,
+							DMA_IT_HT); // we don't need half-transfer interrupt
 
 					xTaskNotifyFromISR(handlers[i]->task_handle, 0,
 							eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
@@ -512,7 +510,7 @@ void uartTxCompleteDMA_callback(UART_HandleTypeDef *huart) {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	int i;
 	for (i = 0; i < num_handlers; i++) {
-		if (handlers[i]->huart == huart) {
+		if (handlers[i]->config.huart == huart) {
 			// notify the end of TX
 //			vTaskNotifyGiveFromISR(handlers[i]->task_handle, &xHigherPriorityTaskWoken);
 			xTaskNotifyFromISR(handlers[i]->task_handle, 0, eNoAction,
@@ -657,17 +655,19 @@ void ModbusMaster::sendTxBuffer() {
 	this->u8Buffer[this->u8BufferSize] = u16crc & 0x00ff;
 	this->u8BufferSize++;
 
-	if (this->enableGpioPort != NULL) {
+	if (this->config.EN_GPIOx != NULL) {
 		//enable transmitter, disable receiver to avoid echo on RS485 transceivers
-		HAL_HalfDuplex_EnableTransmitter(this->huart);
-		HAL_GPIO_WritePin(this->enableGpioPort, this->enableGpioPin,
+		HAL_HalfDuplex_EnableTransmitter(this->config.huart);
+		HAL_GPIO_WritePin(this->config.EN_GPIOx, this->config.EN_GPIO_Pin,
 				GPIO_PIN_SET);
 	}
 
-	if (this->xTypeHW == MB_UART_IT) {
-		HAL_UART_Transmit_IT(this->huart, this->u8Buffer, this->u8BufferSize);
-	} else if (this->xTypeHW == MB_UART_DMA) {
-		HAL_UART_Transmit_DMA(this->huart, this->u8Buffer, this->u8BufferSize);
+	if (this->config.hardware == MB_UART_IT) {
+		HAL_UART_Transmit_IT(this->config.huart, this->u8Buffer,
+				this->u8BufferSize);
+	} else if (this->config.hardware == MB_UART_DMA) {
+		HAL_UART_Transmit_DMA(this->config.huart, this->u8Buffer,
+				this->u8BufferSize);
 	}
 
 	ulTaskNotifyTake(pdTRUE, 250); //wait notification from TXE interrupt
@@ -677,23 +677,23 @@ void ModbusMaster::sendTxBuffer() {
 	 * preprocessor conditions
 	 */
 #if defined(STM32H7)  || defined(STM32F3) || defined(STM32L4)
-	while ((this->huart->Instance->ISR & USART_ISR_TC) == 0) {
+	while ((this->config.huart->Instance->ISR & USART_ISR_TC) == 0) {
 
 	}
 #else
 	  // F429, F103, L152 ...
-  while((this->huart->Instance->SR & USART_SR_TC) ==0 ) {
+  while((this->config.huart->Instance->SR & USART_SR_TC) ==0 ) {
 
   }
 #endif
 
-	if (this->enableGpioPort != NULL) {
+	if (this->config.EN_GPIOx != NULL) {
 
 		//return RS485 transceiver to receive mode
-		HAL_GPIO_WritePin(this->enableGpioPort, this->enableGpioPin,
+		HAL_GPIO_WritePin(this->config.EN_GPIOx, this->config.EN_GPIO_Pin,
 				GPIO_PIN_RESET);
 		//enable receiver, disable transmitter
-		HAL_HalfDuplex_EnableReceiver(this->huart);
+		HAL_HalfDuplex_EnableReceiver(this->config.huart);
 
 	}
 

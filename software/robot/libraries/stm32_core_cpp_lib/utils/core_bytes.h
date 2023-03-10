@@ -31,6 +31,7 @@ uint16_t bytearray_to_uint16(uint8_t* bytearray);
 int16_t bytearray_to_int16(uint8_t* bytearray);
 int16_t bytearray_to_uint32(uint8_t* bytearray);
 void float_to_bytearray(float value, uint8_t* bytearray);
+uint16_t uint8_to_uint16(uint8_t byte1, uint8_t byte2);
 
 
 #endif /* CORE_UTILS_CORE_BYTES_H_ */

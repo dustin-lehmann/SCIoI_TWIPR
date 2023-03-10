@@ -21,4 +21,7 @@
 #include "communication/modbus_rtu/modbus_rtu.h"
 #include "utils/core_debug.hpp"
 
+
+#define _RAM_D2 __attribute__(( section(".ramd2block") ))
+
 #endif /* CORE_CORE_H_ */

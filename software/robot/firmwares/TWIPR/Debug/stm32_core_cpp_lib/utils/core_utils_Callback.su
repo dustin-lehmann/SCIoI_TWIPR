@@ -1,4 +1,0 @@
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_utils_Callback.cpp:12:1:core_utils_Callback::core_utils_Callback()	16	static
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_utils_Callback.cpp:16:1:core_utils_Callback::core_utils_Callback(void (*)(void*, void*), void*)	24	static
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_utils_Callback.cpp:21:6:void core_utils_Callback::call()	16	static
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_utils_Callback.cpp:25:6:void core_utils_Callback::call(void*)	16	static

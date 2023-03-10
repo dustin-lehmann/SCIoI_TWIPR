@@ -15,8 +15,6 @@
 
 #if CORE_CONFIG_USE_SPI
 
-
-
 #define BMI160_REG_CHIP_ID	0x00
 
 typedef struct bmi160_gyr_raw {
@@ -49,24 +47,27 @@ typedef struct bmi160_gyr_calib {
 	float z = 0.0;
 } bmi160_gyr_calib;
 
-typedef struct bmi160_acc_config {
+typedef struct bmi160_acc_config_t {
 	uint8_t odr = BMI160_ACCEL_ODR_400HZ;
 	uint8_t bw = BMI160_ACCEL_BW_NORMAL_AVG4;
 	uint8_t range = BMI160_ACCEL_RANGE_8G;
 	uint8_t foc_enable = 0;
-} bmi160_acc_config;
+} bmi160_acc_config_t;
 
-typedef struct bmi160_gyr_config {
+typedef struct bmi160_gyr_config_t {
 	uint8_t odr = BMI160_GYRO_ODR_400HZ;
 	uint8_t bw = BMI160_GYRO_BW_NORMAL_MODE;
 	uint8_t range = BMI160_GYRO_RANGE_1000_DPS;
 	uint8_t foc_enable = 1;
-} bmi160_gyr_config;
+} bmi160_gyr_config_t;
 
-typedef struct bmi160_config {
-	bmi160_gyr_config gyr;
-	bmi160_acc_config acc;
-} bmi160_config;
+typedef struct bmi160_config_t {
+	SPI_HandleTypeDef *hspi;
+	GPIO_TypeDef *CS_GPIOx;
+	uint16_t CS_GPIO_Pin;
+	bmi160_gyr_config_t gyr;
+	bmi160_acc_config_t acc;
+} bmi160_config_t;
 
 enum BMI160_PowerMode {
 	BMI160_Power_Normal, BMI160_Power_Suspend
@@ -74,12 +75,9 @@ enum BMI160_PowerMode {
 
 class BMI160 {
 public:
-	BMI160(SPI_HandleTypeDef *hspi, GPIO_TypeDef *CS_GPIOx,
-			uint16_t CS_GPIO_Pin);
-	BMI160(SPI_HandleTypeDef *hspi, GPIO_TypeDef *CS_GPIOx,
-			uint16_t CS_GPIO_Pin, bmi160_config config);
+	BMI160();
 
-	uint8_t init();
+	uint8_t init(bmi160_config_t config);
 
 	void reset();
 
@@ -101,7 +99,7 @@ public:
 	uint8_t setAccConfig(uint8_t config, uint8_t range);
 	uint8_t setPowerMode(BMI160_PowerMode mode);
 
-	bmi160_config config;
+
 
 	uint8_t writeRegister(uint8_t reg, uint8_t data);
 	uint8_t readRegister(uint8_t reg);
@@ -114,9 +112,8 @@ public:
 	uint32_t sensortime;
 	bmi160_gyr_calib gyr_calib;
 private:
-	SPI_HandleTypeDef *hspi;
-	GPIO_TypeDef *CS_GPIOx;
-	uint16_t CS_Pin;
+
+	bmi160_config_t _config;
 
 };
 #endif

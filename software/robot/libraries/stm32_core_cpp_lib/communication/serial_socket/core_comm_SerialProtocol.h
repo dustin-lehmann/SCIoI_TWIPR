@@ -23,15 +23,15 @@ public:
 	uint8_t address_3;
 	uint8_t flag;
 	uint8_t data[CORE_CONFIG_MAX_MSG_LENGTH];
-	uint8_t len;
+	uint16_t len;
 
 
 	void copyTo(core_comm_SerialMessage *msg);
-	uint8_t check(uint8_t *buffer, uint8_t len);
+	uint8_t check(uint8_t *buffer, uint16_t len);
 	uint8_t check(core_utils_Buffer *buffer);
 	uint8_t encode(uint8_t *buffer);
 	void encode(core_utils_Buffer *buffer);
-	uint8_t decode(uint8_t *buffer, uint8_t len);
+	uint8_t decode(uint8_t *buffer, uint16_t len);
 	uint8_t decode(core_utils_Buffer *buffer);
 private:
 	static const uint8_t protocol_overhead = 8;

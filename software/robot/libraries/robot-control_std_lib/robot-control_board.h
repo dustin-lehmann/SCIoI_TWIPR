@@ -57,6 +57,8 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 
 
 #define BOARD_RS485_UART &huart8
+#define BOARD_RS485_UART_EN_GPIOx GPIOD
+#define BOARD_RS485_UART_EN_GPIO_PIN GPIO_PIN_15
 
 #define BOARD_DEBUG_UART &huart1
 #define BOARD_DEBUG_UART_DMA_RX &hdma_usart1_rx

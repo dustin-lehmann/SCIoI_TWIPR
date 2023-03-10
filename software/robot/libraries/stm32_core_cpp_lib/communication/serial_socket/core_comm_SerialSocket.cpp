@@ -17,17 +17,17 @@ core_comm_UartInterface_config std_uart_config = { .uart =
 		std_hardware_uart_config, .use_rtos = 1, .use_protocol = 1, .use_queue =
 		1, .rx_callback_value = CORE_COMM_SERIAL_SOCKET_RX_CB_MSG, };
 
-core_comm_UartInterface::core_comm_UartInterface(){
+core_comm_UartInterface::core_comm_UartInterface() {
 	this->state = CORE_COMM_SERIAL_SOCKET_STATE_NONE;
 }
-
 
 /* ============================================================================= */
 void core_comm_UartInterface::init(UART_HandleTypeDef *huart) {
 	this->init(huart, std_uart_config);
 }
 /* ============================================================================= */
-void core_comm_UartInterface::init(UART_HandleTypeDef *huart, core_comm_UartInterface_config config) {
+void core_comm_UartInterface::init(UART_HandleTypeDef *huart,
+		core_comm_UartInterface_config config) {
 
 	this->config = config;
 	this->uart.init(huart, this->config.uart);
@@ -71,7 +71,7 @@ void core_comm_UartInterface::send(core_comm_SerialMessage *message) {
 }
 
 /* ============================================================================= */
-void core_comm_UartInterface::send(uint8_t *buffer, uint8_t len) {
+void core_comm_UartInterface::send(uint8_t *buffer, uint16_t len) {
 	if (this->state != CORE_COMM_SERIAL_SOCKET_STATE_RUN) {
 		core_ErrorHandler(1);
 	}
@@ -80,7 +80,7 @@ void core_comm_UartInterface::send(uint8_t *buffer, uint8_t len) {
 }
 
 /* ============================================================================= */
-void core_comm_UartInterface::sendRaw(uint8_t *buffer, uint8_t len) {
+void core_comm_UartInterface::sendRaw(uint8_t *buffer, uint16_t len) {
 	if (this->state != CORE_COMM_SERIAL_SOCKET_STATE_RUN) {
 		core_ErrorHandler(1);
 	}
@@ -137,18 +137,21 @@ uint8_t core_comm_UartInterface::rx_function() {
 			}
 
 			if (this->callbacks.rx.registered) {
-				if (this->config.rx_callback_value == CORE_COMM_SERIAL_SOCKET_RX_CB_MSG){
+				if (this->config.rx_callback_value
+						== CORE_COMM_SERIAL_SOCKET_RX_CB_MSG) {
 					this->callbacks.rx.call(&rx_message);
-				} else if (this->config.rx_callback_value == CORE_COMM_SERIAL_SOCKET_RX_CB_IFC){
+				} else if (this->config.rx_callback_value
+						== CORE_COMM_SERIAL_SOCKET_RX_CB_IFC) {
 					this->callbacks.rx.call(this);
 				}
 			}
 		} else { // no protocol used
 			if (this->callbacks.rx.registered) {
-				if (this->config.rx_callback_value == CORE_COMM_SERIAL_SOCKET_RX_CB_BUF){
+				if (this->config.rx_callback_value
+						== CORE_COMM_SERIAL_SOCKET_RX_CB_BUF) {
 					this->callbacks.rx.call(buffer);
 				} else {
-					while (1){
+					while (1) {
 						nop();
 						// Not yet implemented
 					}

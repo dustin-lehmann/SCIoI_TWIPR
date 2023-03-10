@@ -9,6 +9,7 @@
 #define COMMUNICATION_TWIPR_COMMUNICATION_H_
 
 #include "core.h"
+#include "twipr_messages.h"
 
 #define MSG_COMMAND_WRITE 0x01
 #define MSG_COMMAND_READ 0x02
@@ -21,6 +22,7 @@
 
 typedef struct twipr_comm_config_t {
 	UART_HandleTypeDef *huart;
+	RegisterMap *register_map;
 } twipr_comm_config_t;
 
 typedef struct twipr_comm_filter_t {
@@ -41,23 +43,21 @@ public:
 	void send(uint8_t cmd, uint8_t module, uint16_t address, uint8_t flag, uint8_t* data, uint8_t len);
 	void sendRaw(uint8_t* buffer, uint16_t len);
 
-
-
-
-
 	void task_loop();
-
 
 	osThreadId_t thread;
 	xTaskHandle task;
 
+	uint32_t last_received_message_tick = 0;
 private:
 
 	void _handleIncomingMessages();
 	void _handleMessage_read(core_comm_SerialMessage* msg);
+	void _handleMessage_write(core_comm_SerialMessage* msg);
+	void _handleMessage_function(core_comm_SerialMessage* msg);
 
 	core_comm_UartInterface uart_cm4;
-	core_utils_RegisterMap *register_map;
+	RegisterMap *register_map;
 };
 
 void twipr_comm_task(void *argument);

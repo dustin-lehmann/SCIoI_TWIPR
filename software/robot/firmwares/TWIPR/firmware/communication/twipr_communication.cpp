@@ -25,10 +25,7 @@ static const osThreadAttr_t task_attributes = { .name = "comm_task",
 core_comm_SerialMessage incoming_msg;
 core_comm_SerialMessage outgoing_msg;
 
-typedef struct test_struct {
-	uint8_t a;
-	float b;
-} test_struct;
+uint8_t function_output_buffer[128] = { 0 };
 
 /* =======================================================*/
 TWIPR_Communication::TWIPR_Communication() {
@@ -37,6 +34,9 @@ TWIPR_Communication::TWIPR_Communication() {
 
 /* =======================================================*/
 void TWIPR_Communication::init(twipr_comm_config_t config) {
+
+	// Copy the register map
+	this->register_map = config.register_map;
 
 	// Initialize the UART interface to the Raspberry Pi
 	this->uart_cm4.init(config.huart,
@@ -92,11 +92,11 @@ void twipr_comm_task(void *argument) {
 	xTaskNotifyGive(comm->task);
 	nop();
 
-	uint32_t kernel_ticks = 0;
+//	uint32_t kernel_ticks = 0;
 	while (true) {
-		kernel_ticks = osKernelGetTickCount();
+//		kernel_ticks = osKernelGetTickCount();
 
-		uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 		// Do stuff
 		comm->task_loop();
 
@@ -126,6 +126,7 @@ void TWIPR_Communication::_handleIncomingMessages() {
 		// Handle the different commands
 		switch (incoming_msg.cmd) {
 		case MSG_COMMAND_WRITE: {
+			this->_handleMessage_write(&incoming_msg);
 			break;
 		}
 		case MSG_COMMAND_READ: {
@@ -141,33 +142,114 @@ void TWIPR_Communication::_handleIncomingMessages() {
 			break;
 		}
 		case MSG_COMMAND_FCT: {
-			nop();
+			this->_handleMessage_function(&incoming_msg);
 			break;
 		}
 		case MSG_COMMAND_ECHO: {
 			this->send(&incoming_msg);
 			break;
 		}
+		default: {
+			continue;
+			break;
 		}
+		}
+		this->last_received_message_tick = osKernelGetTickCount();
 	}
+}
+
+/* =======================================================*/
+void TWIPR_Communication::_handleMessage_write(core_comm_SerialMessage *msg) {
+	// Check if the module is the default module
+	if (!msg->address_1 == 0x00) {
+		return; // TODO
+	}
+
+	// Check if the address exists in the register map
+	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
+	if (!this->register_map->hasEntry(address)) {
+		return;
+	}
+	// Check if the length of the message is correct
+	if (this->register_map->getSize(address) != msg->len) {
+		return; // TODO
+	}
+
+	// Write the entry
+	this->register_map->write(address, msg->data);
 }
 
 /* =======================================================*/
 void TWIPR_Communication::_handleMessage_read(core_comm_SerialMessage *msg) {
 
-	msg->copyTo(&outgoing_msg);
-	outgoing_msg.cmd = MSG_COMMAND_ANSWER;
-	outgoing_msg.data[0] = 1;
-	outgoing_msg.data[1] = 2;
-	outgoing_msg.len = 2;
+	// Check if the module is the default module
+	if (!msg->address_1 == 0x00) {
+		return; // TODO
+	}
+
+	// Check if the address exists in the register map
+	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
+
+	if (!this->register_map->hasEntry(address)) {
+		return;
+	}
+
+	// Check if this is a data entry
+	if (this->register_map->getType(address) != REGISTER_ENTRY_DATA) {
+		return;
+	}
+
+	// Read the entry into the outgoing message
+	outgoing_msg.len = this->register_map->read(address, outgoing_msg.data);
+
+	// Construct the outgoing message
+	outgoing_msg.address_1 = msg->address_1;
+	outgoing_msg.address_2 = msg->address_2;
+	outgoing_msg.address_3 = msg->address_3;
 	outgoing_msg.flag = 1;
+	outgoing_msg.cmd = MSG_COMMAND_ANSWER;
 
 	this->send(&outgoing_msg);
+}
+/* =======================================================*/
+void TWIPR_Communication::_handleMessage_function(
+		core_comm_SerialMessage *msg) {
+
+	// Check if the module is the default module
+	if (!msg->address_1 == 0x00) {
+		return; // TODO
+	}
+
+	// Check if the address exists in the register map and is a function
+	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
+
+	if (!this->register_map->hasEntry(address)) {
+		return;
+	}
+
+	// Check if it is a function
+	if (this->register_map->getType(address) != REGISTER_ENTRY_FUNCTION) {
+		return;
+	}
+
+	// Execute the function and store the data
+	uint8_t ret_size = this->register_map->execute(address, msg->data,
+			outgoing_msg.data);
+
+	// Send back a message if the function returns something
+	if (ret_size > 0) {
+		outgoing_msg.address_1 = msg->address_1;
+		outgoing_msg.address_2 = msg->address_2;
+		outgoing_msg.address_3 = msg->address_3;
+		outgoing_msg.flag = 1;
+		outgoing_msg.cmd = MSG_COMMAND_ANSWER;
+		outgoing_msg.len = ret_size;
+		this->send(&outgoing_msg);
+	}
 
 }
 
 /* =======================================================*/
-
 void uart_cm4_rx_callback(void *argument, void *parameters) {
 
 	TWIPR_Communication *comm = (TWIPR_Communication*) parameters;
@@ -181,8 +263,3 @@ void uart_cm4_rx_callback(void *argument, void *parameters) {
 //		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 	}
 }
-
-/* =======================================================*/
-
-/* =======================================================*/
-

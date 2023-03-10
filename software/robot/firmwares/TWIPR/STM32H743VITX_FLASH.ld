@@ -171,6 +171,15 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+  
+   .ramd2block :
+  {
+    . = ALIGN(4);
+    _sramd2block = .;       /* create a global symbol at ccmram start */
+    *(.ramd2block)
+    *(.ramd2block*)
+    
+    . = ALIGN(4);
+    _eramd2block = .;       /* create a global symbol at ccmram end */
+  } > RAM_D2
 }
-
-

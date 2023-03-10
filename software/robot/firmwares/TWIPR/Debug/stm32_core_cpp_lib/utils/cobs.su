@@ -1,3 +1,0 @@
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/cobs.cpp:20:9:uint8_t cobsEncode(uint8_t*, uint8_t, uint8_t*)	40	static
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/cobs.cpp:51:9:uint8_t cobsDecode(uint8_t*, uint8_t, uint8_t*)	40	static
-C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/cobs.cpp:76:9:uint8_t cobsDecodeInPlace(uint8_t*, uint8_t)	24	static

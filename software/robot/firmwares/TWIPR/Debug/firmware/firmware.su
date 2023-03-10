@@ -1,7 +1,0 @@
-../firmware/firmware.cpp:20:6:void firmware()	8	static
-../firmware/firmware.cpp:26:6:void firmware_task(void*)	24	static
-../firmware/firmware.cpp:41:1:TWIPR_Firmware::TWIPR_Firmware()	16	static
-../firmware/firmware.cpp:46:6:void TWIPR_Firmware::init()	16	static
-../firmware/firmware.cpp:63:6:void TWIPR_Firmware::start()	16	static
-../firmware/firmware.cpp:67:1:void __static_initialization_and_destruction_0(int, int)	16	static
-../firmware/firmware.cpp:67:1:cpp)	8	static

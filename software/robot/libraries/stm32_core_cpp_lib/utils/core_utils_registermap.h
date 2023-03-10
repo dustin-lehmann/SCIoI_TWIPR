@@ -8,42 +8,153 @@
 #ifndef UTILS_CORE_UTILS_REGISTERMAP_H_
 #define UTILS_CORE_UTILS_REGISTERMAP_H_
 
+typedef enum register_entry_rw_t {
+	REGISTER_ENTRY_READ = 0,
+	REGISTER_ENTRY_WRITE = 1,
+	REGISTER_ENTRY_READWRITE = 2
+} register_entry_rw_t;
+
+typedef enum register_entry_type {
+	REGISTER_ENTRY_DATA = 1, REGISTER_ENTRY_FUNCTION = 2,
+} register_entry_type;
+
 /* ============================================================ */
 class RegisterEntry {
 public:
-	virtual void set(void *value){
+	virtual void write(void *value) {
+	}
+	virtual void write(uint8_t *data) {
+	}
+	virtual uint8_t readBytes(uint8_t *data) {
+	}
+	virtual uint8_t getSize() {
+	}
+	virtual uint8_t getInputSize() {
+	}
+	virtual uint8_t getOutputSize() {
+	}
+	virtual void execute() {
 
 	}
-	virtual void set(uint8_t* data){
+	virtual uint8_t execute(uint8_t *input, uint8_t *output) {
 
 	}
+	virtual register_entry_type getType() {
+
+	}
+	virtual register_entry_rw_t getReadWriteSetting() {
+
+	}
+	register_entry_type type;
+	register_entry_rw_t rw;
 };
 
 /* ============================================================ */
 class RegisterMap {
+public:
+	virtual void write(uint16_t address, void *data) {
+	}
+	virtual void write(uint16_t address, uint8_t *data) {
+	}
+	virtual void addEntry(uint16_t address, RegisterEntry *entry) {
 
+	}
+	virtual bool hasEntry(uint16_t address) {
+
+	}
+	virtual uint8_t read(uint16_t address, uint8_t *data) {
+
+	}
+	virtual uint8_t getSize(uint16_t address) {
+
+	}
+	virtual register_entry_type getType(uint16_t address){
+
+	}
+	virtual register_entry_rw_t getReadWriteSetting(uint16_t address){
+
+	}
+
+	/* -------------------------------------------------- */
+	virtual uint8_t execute(uint16_t address, uint8_t *input, uint8_t *output) {
+	}
+	/* -------------------------------------------------- */
+	virtual uint8_t execute(uint16_t address) {
+	}
+
+	RegisterEntry *entries;
 };
 
 /* ============================================================ */
-class core_utils_RegisterMap {
+template<int size>
+class core_utils_RegisterMap: public RegisterMap {
 public:
 
-	void set(uint16_t address, void *data) {
-		if (this->entries[address] != NULL){
-			this->entries[address]->set(data);
+	void write(uint16_t address, void *data) {
+		if (this->entries[address] != NULL
+				&& this->entries[address]->getType() == REGISTER_ENTRY_DATA) {
+			this->entries[address]->write(data);
 		}
 	}
-	void set(uint16_t address, uint8_t *data) {
-		if (this->entries[address] != NULL){
-			this->entries[address]->set(data);
+	/* -------------------------------------------------- */
+	void write(uint16_t address, uint8_t *data) {
+		if (this->entries[address] != NULL
+				&& this->entries[address]->getType() == REGISTER_ENTRY_DATA) {
+			this->entries[address]->write(data);
 		}
 	}
-
+	/* -------------------------------------------------- */
+	uint8_t read(uint16_t address, uint8_t *data) {
+		if (this->entries[address] != NULL
+				&& this->entries[address]->getType() == REGISTER_ENTRY_DATA) {
+			return this->entries[address]->readBytes(data);
+		}
+		return 0;
+	}
+	/* -------------------------------------------------- */
+	uint8_t execute(uint16_t address, uint8_t *input, uint8_t *output) {
+		if (this->entries[address] != NULL
+				&& this->entries[address]->getType() == REGISTER_ENTRY_FUNCTION) {
+			return this->entries[address]->execute(input, output);
+		}
+	}
+	/* -------------------------------------------------- */
+	uint8_t execute(uint16_t address) {
+		if (this->entries[address] != NULL
+				&& this->entries[address]->getType() == REGISTER_ENTRY_FUNCTION) {
+			if (this->entries[address]->getInputSize() == 0
+					&& this->entries[address]->getOutputSize() == 0) {
+				this->entries[address]->execute();
+			}
+		}
+		return 0;
+	}
+	/* -------------------------------------------------- */
 	void addEntry(uint16_t address, RegisterEntry *entry) {
 		this->entries[address] = entry;
 	}
+	/* -------------------------------------------------- */
+	bool hasEntry(uint16_t address) {
+		if (this->entries[address] != NULL) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	/* -------------------------------------------------- */
+	uint8_t getSize(uint16_t address) {
+		return this->entries[address]->getSize();
+	}
+	/* -------------------------------------------------- */
 
-	RegisterEntry *entries[10] = {0};
+	register_entry_type getType(uint16_t address){
+		return this->entries[address]->getType();
+	}
+	register_entry_rw_t getReadWriteSetting(uint16_t address){
+		return this->entries[address]->getReadWriteSetting();
+	}
+
+	RegisterEntry *entries[size] = { 0 };
 private:
 
 };
@@ -52,76 +163,373 @@ private:
 template<typename T>
 class core_utils_RegisterEntry: public RegisterEntry {
 public:
-	core_utils_RegisterEntry(uint16_t address, core_utils_RegisterMap *map,
-			T *data) {
-		this->data = data;
-		this->address = address;
-		map->addEntry(address, this);
-		this->size = sizeof(T);
-	}
-	/* -------------------------------------------------- */
-	core_utils_RegisterEntry(uint16_t address, core_utils_RegisterMap *map,
-			T *data, core_utils_Callback write_callback) {
-		this->address = address;
-		this->data = data;
-		this->write_callback = write_callback;
-		this->write_callback_set = true;
-		map->addEntry(address, this);
-		this->size = sizeof(T);
-	}
-	/* -------------------------------------------------- */
-	void set(T value) {
-		*(this->data) = value;
-		this->write_callback();
-	}
-	/* -------------------------------------------------- */
-	void set(void *value) {
+	core_utils_RegisterEntry() {
 
-		T* value_typed = (T*) value;
+	}
+	/* -------------------------------------------------- */
+	core_utils_RegisterEntry(uint16_t address) {
+		this->address = address;
+	}
+	/* -------------------------------------------------- */
+	core_utils_RegisterEntry(uint16_t address, RegisterMap *map, T *data,
+			register_entry_rw_t rw) {
+		this->set(address, map, data, rw);
+	}
+	/* -------------------------------------------------- */
+	core_utils_RegisterEntry(uint16_t address, RegisterMap *map, T *data,
+			register_entry_rw_t rw, core_utils_Callback write_callback) {
+		this->set(address, map, data, rw, write_callback);
+	}
+
+	/* -------------------------------------------------- */
+	void set(RegisterMap *map, T *data, register_entry_rw_t rw) {
+		this->data = data;
+		map->addEntry(address, this);
+		this->rw = rw;
+	}
+
+	/* -------------------------------------------------- */
+	void set(uint16_t address, RegisterMap *map, T *data,
+			register_entry_rw_t rw) {
+		this->address = address;
+		this->data = data;
+		map->addEntry(address, this);
+		this->rw = rw;
+	}
+	/* -------------------------------------------------- */
+	void set(uint16_t address, RegisterMap *map, T *data,
+			register_entry_rw_t rw, core_utils_Callback write_function) {
+		this->address = address;
+		this->data = data;
+		this->write_function = write_function;
+		map->addEntry(address, this);
+		this->rw = rw;
+	}
+	/* -------------------------------------------------- */
+	void write(T value) {
+		if (this->rw == REGISTER_ENTRY_READ) {
+			return;
+		}
+		*(this->data) = value;
+		this->write_function();
+	}
+	/* -------------------------------------------------- */
+	void write(void *value) {
+		if (this->rw == REGISTER_ENTRY_READ) {
+			return;
+		}
+		T *value_typed = (T*) value;
 
 		*(this->data) = *value_typed;
-	}
-	/* ------------------------- */
-	void set(uint8_t *data) { // TODO: not good
-
-		for (uint8_t i  = 0; i < sizeof(T); i++) {
-			this->data_union.data_bytes[i] = data[i];
-		}
-		this->set(this->data_union.data);
+		this->write_function();
 	}
 	/* -------------------------------------------------- */
-	uint8_t getBytes(uint8_t *data) {
+	void write(uint8_t *data) { // TODO: not good
+		if (this->rw == REGISTER_ENTRY_READ) {
+			return;
+		}
+		for (uint8_t i = 0; i < sizeof(T); i++) {
+			this->data_union.data_bytes[i] = data[i];
+		}
+		this->write(this->data_union.data);
+	}
+	/* -------------------------------------------------- */
+	uint8_t readBytes(uint8_t *data) {
+		if (this->rw == REGISTER_ENTRY_WRITE) {
+			return 0;
+		}
 		this->data_union.data = *(this->data);
 
-		for (uint8_t i =0; i<sizeof(T); i++){
+		for (uint8_t i = 0; i < sizeof(T); i++) {
 			data[i] = this->data_union.data_bytes[i];
 		}
 		return sizeof(T);
 	}
 	/* -------------------------------------------------- */
-	T get() {
+	T read() {
+		if (this->rw == REGISTER_ENTRY_WRITE) {
+			return;
+		}
 		return *(this->data);
 	}
 
 	/* -------------------------------------------------- */
+	uint8_t getSize() {
+		return sizeof(T);
+	}
+	/* -------------------------------------------------- */
+	register_entry_type getType() {
+		return REGISTER_ENTRY_DATA;
+	}
+	register_entry_rw_t getReadWriteSetting() {
+		return this->rw;
+	}
 
+	/* -------------------------------------------------- */
 	union data_union_t {
 		uint8_t data_bytes[sizeof(T)];
 		T data;
 	} data_union;
 
+	/* -------------------------------------------------- */
+	register_entry_type type = REGISTER_ENTRY_DATA;
 	uint16_t address;
+	register_entry_rw_t rw;
+
 private:
 	T *data;
-	uint8_t size;
-	bool write_callback_set = false;
-	core_utils_Callback write_callback;
+	core_utils_Callback write_function = core_utils_Callback(NULL, NULL);
 };
 
 /* ============================================================ */
+template<typename output_t, typename input_t>
+class core_utils_RegisterFunction: public RegisterEntry {
+public:
+	core_utils_RegisterFunction() {
+
+	}
+
+	core_utils_RegisterFunction(uint16_t address) {
+		this->address = address;
+	}
+
+	/* -------------------------------------------------- */
+	core_utils_RegisterFunction(uint16_t address, RegisterMap *map,
+			output_t (*function)(input_t)) {
+		this->set(address, map, function);
+	}
+	/* -------------------------------------------------- */
+	void set(RegisterMap *map, output_t (*function)(input_t)) {
+		this->function = function;
+		map->addEntry(this->address, this);
+	}
+	/* -------------------------------------------------- */
+	void set(uint16_t address, RegisterMap *map,
+			output_t (*function)(input_t)) {
+		this->address = address;
+		this->function = function;
+		map->addEntry(this->address, this);
+	}
+
+	/* -------------------------------------------------- */
+	output_t execute(uint8_t *data) {
+		for (uint8_t i = 0; i < sizeof(input_t); i++) {
+			this->input_data_union.data_bytes[i] = data[i];
+		}
+		return this->function(this->input_data_union.data);
+	}
+
+	/* -------------------------------------------------- */
+	output_t execute(input_t argument) {
+		if (this->function != NULL) {
+			return this->function(argument);
+		}
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t execute(uint8_t *input_buffer, uint8_t *output_buffer) {
+		for (uint8_t i = 0; i < sizeof(input_t); i++) {
+			this->input_data_union.data_bytes[i] = input_buffer[i];
+		}
+		output_t out = this->execute(this->input_data_union.data);
+
+//		this->output_data_union.data = out;
+//		for (uint8_t i = 0; i < sizeof(output_t); i++) {
+//			output_buffer[i] = this->output_data_union.data_bytes[i];
+//		}
+
+		uint8_t *data_ptr = (uint8_t*) &out;
+		for (uint8_t i = 0; i < sizeof(output_t); i++) {
+			output_buffer[i] = data_ptr[i];
+		}
+
+		return sizeof(output_t);
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t getInputSize() {
+		return sizeof(input_t);
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t getOutputSize() {
+		return sizeof(output_t);
+	}
+	/* -------------------------------------------------- */
+	register_entry_type getType() {
+		return REGISTER_ENTRY_FUNCTION;
+	}
+	/* -------------------------------------------------- */
+	register_entry_rw_t getReadWriteSetting() {
+		return REGISTER_ENTRY_READWRITE;
+	}
+
+	/* -------------------------------------------------- */
+	union input_data_union_t {
+		uint8_t data_bytes[sizeof(input_t)];
+		input_t data;
+	} input_data_union;
+
+	register_entry_type type = REGISTER_ENTRY_FUNCTION;
+	uint16_t address;
+	output_t (*function)(input_t argument);
+};
 
 /* ============================================================ */
+template<typename output_t>
+class core_utils_RegisterFunction<output_t, void> : public RegisterEntry {
+public:
+	core_utils_RegisterFunction() {
 
+	}
+
+	core_utils_RegisterFunction(uint16_t address) {
+		this->address = address;
+	}
+
+	/* -------------------------------------------------- */
+	core_utils_RegisterFunction(uint16_t address, RegisterMap *map,
+			output_t (*function)(void)) {
+		this->set(address, map, function);
+	}
+	/* -------------------------------------------------- */
+	void set(RegisterMap *map, output_t (*function)(void)) {
+		this->function = function;
+		map->addEntry(this->address, this);
+	}
+	/* -------------------------------------------------- */
+	void set(uint16_t address, RegisterMap *map, output_t (*function)(void)) {
+		this->address = address;
+		this->function = function;
+		map->addEntry(this->address, this);
+	}
+
+	/* -------------------------------------------------- */
+	output_t execute() {
+		if (this->function != NULL) {
+			return this->function();
+		}
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t execute(uint8_t* input_buffer, uint8_t *output_buffer) {
+		return this->execute(output_buffer);
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t execute(uint8_t *output_buffer) {
+
+		output_t out = this->execute();
+//		this->output_data_union.data = out;
+//		for (uint8_t i = 0; i < sizeof(output_t); i++) {
+//			output_buffer[i] = this->output_data_union.data_bytes[i];
+//		}
+
+		uint8_t *data_ptr = (uint8_t*) &out;
+		for (uint8_t i = 0; i < sizeof(output_t); i++) {
+			output_buffer[i] = data_ptr[i];
+		}
+
+		return sizeof(output_t);
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t getInputSize() {
+		return 0;
+	}
+	/* -------------------------------------------------- */
+	uint8_t getOutputSize() {
+		return sizeof(output_t);
+	}
+	/* -------------------------------------------------- */
+	register_entry_type getType() {
+		return REGISTER_ENTRY_FUNCTION;
+	}
+	/* -------------------------------------------------- */
+	register_entry_rw_t getReadWriteSetting() {
+		return REGISTER_ENTRY_READWRITE;
+	}
+	register_entry_type type = REGISTER_ENTRY_FUNCTION;
+	uint16_t address;
+	output_t (*function)(void);
+};
+
+/* ============================================================ */
+template<>
+class core_utils_RegisterFunction<void, void> : public RegisterEntry {
+public:
+	core_utils_RegisterFunction() {
+
+	}
+
+	core_utils_RegisterFunction(uint16_t address) {
+		this->address = address;
+	}
+
+	/* -------------------------------------------------- */
+	core_utils_RegisterFunction(uint16_t address, RegisterMap *map,
+			void (*function)(void)) {
+		this->set(address, map, function);
+	}
+	/* -------------------------------------------------- */
+	void set(RegisterMap *map, void (*function)(void)) {
+		this->function = function;
+		map->addEntry(this->address, this);
+		this->type = REGISTER_ENTRY_FUNCTION;
+	}
+	/* -------------------------------------------------- */
+	void set(uint16_t address, RegisterMap *map, void (*function)(void)) {
+		this->address = address;
+		this->function = function;
+		map->addEntry(this->address, this);
+		this->type = REGISTER_ENTRY_FUNCTION;
+	}
+
+	/* -------------------------------------------------- */
+	void execute() {
+		if (this->function != NULL) {
+			return this->function();
+		}
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t execute(uint8_t *output_buffer) {
+
+		this->execute();
+		return 0;
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t execute(uint8_t* input_buffer, uint8_t *output_buffer) {
+		this->execute();
+		return 0;
+	}
+
+
+	/* -------------------------------------------------- */
+	uint8_t getInputSize() {
+		return 0;
+	}
+
+	/* -------------------------------------------------- */
+	uint8_t getOutputSize() {
+		return 0;
+	}
+
+	/* -------------------------------------------------- */
+	register_entry_type getType() {
+		return REGISTER_ENTRY_FUNCTION;
+	}
+	/* -------------------------------------------------- */
+	register_entry_rw_t getReadWriteSetting() {
+		return REGISTER_ENTRY_READWRITE;
+	}
+	/* -------------------------------------------------- */
+
+	register_entry_type type;
+	uint16_t address;
+	void (*function)(void);
+};
 /* ============================================================ */
 
 #endif /* UTILS_CORE_UTILS_REGISTERMAP_H_ */

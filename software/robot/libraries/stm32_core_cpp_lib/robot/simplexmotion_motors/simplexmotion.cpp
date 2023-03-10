@@ -18,7 +18,7 @@ uint8_t SimplexMotionMotor::writeRegisters(uint16_t address,
 	int32_t u32NotificationValue;
 	modbus_query_t telegram;
 
-	telegram.u8id = this->id;
+	telegram.u8id = this->_config.id;
 
 	if (num_registers > 1) {
 		telegram.u8fct = MB_FC_WRITE_MULTIPLE_REGISTERS;
@@ -29,7 +29,7 @@ uint8_t SimplexMotionMotor::writeRegisters(uint16_t address,
 	telegram.u16CoilsNo = num_registers;
 	telegram.u16reg = data;
 
-	this->modbus->query(telegram);
+	this->_config.modbus->query(telegram);
 	u32NotificationValue = ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // block until query finished
 	if (u32NotificationValue != ERR_OK_QUERY) {
 		this->error_handler(SIMPLEXMOTION_ERROR_EXTERNAL_CONNECTION);
@@ -45,13 +45,13 @@ uint8_t SimplexMotionMotor::readRegisters(uint16_t address,
 	int32_t u32NotificationValue;
 	modbus_query_t telegram;
 
-	telegram.u8id = this->id;
+	telegram.u8id = this->_config.id;
 	telegram.u8fct = MB_FC_READ_REGISTERS;
 	telegram.u16RegAdd = address; //read temp of motor = 101
 	telegram.u16CoilsNo = num_registers;
 	telegram.u16reg = data;
 
-	this->modbus->query(telegram);
+	this->_config.modbus->query(telegram);
 	u32NotificationValue = ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // block until query finished
 	if (u32NotificationValue != ERR_OK_QUERY) {
 		this->error_handler(SIMPLEXMOTION_ERROR_EXTERNAL_CONNECTION);
@@ -62,11 +62,10 @@ uint8_t SimplexMotionMotor::readRegisters(uint16_t address,
 }
 
 // ==============================================================
-uint8_t SimplexMotionMotor::init(uint8_t id, int8_t direction, ModbusMaster *modbus) {
+uint8_t SimplexMotionMotor::init(simplexmotion_config_t config) {
 
-	this->id = id;
-	this->modbus = modbus;
-	this->direction = direction;
+	this->_config = config;
+
 
 	this->_checked = 0;
 	this->_init = 0;
@@ -77,7 +76,7 @@ uint8_t SimplexMotionMotor::init(uint8_t id, int8_t direction, ModbusMaster *mod
 	ret = this->setMode(SIMPLEXMOTION_MODE_RESET);
 
 	// Read the motor status
-	simplexmotion_status status;
+	simplexmotion_status_t status;
 	ret = this->getStatus(&status);
 
 	if (not (ret)) {
@@ -97,7 +96,7 @@ uint8_t SimplexMotionMotor::init(uint8_t id, int8_t direction, ModbusMaster *mod
 }
 
 // ==============================================================
-void SimplexMotionMotor::start(simplexmotion_mode mode) {
+void SimplexMotionMotor::start(simplexmotion_mode_t mode) {
 	uint8_t ret = 0;
 	if (!this->_init) {
 		while (1) {
@@ -183,7 +182,7 @@ uint8_t SimplexMotionMotor::check() {
 	return 1;
 }
 // ==============================================================
-uint8_t SimplexMotionMotor::setMode(simplexmotion_mode mode) {
+uint8_t SimplexMotionMotor::setMode(simplexmotion_mode_t mode) {
 	uint16_t data = (uint16_t) mode;
 
 	// Set the mode
@@ -244,7 +243,7 @@ float SimplexMotionMotor::getPosition() {
 		return 0;
 	}
 	position = data[0] << 16 | data[1];
-	return position / 4096.0 * this->direction;
+	return position / 4096.0 * this->_config.direction;
 }
 
 // ==============================================================
@@ -273,7 +272,7 @@ float SimplexMotionMotor::getSpeed() {
 	if (!success) {
 		return 0;
 	}
-	float speed = this->direction * 2 * pi * speed_signed / 256;
+	float speed = this->_config.direction * 2 * pi * speed_signed / 256;
 
 	return speed;
 }
@@ -338,7 +337,7 @@ uint8_t SimplexMotionMotor::setTorque(float torque) {
 	}
 
 	// Calculate the corresponding torque value
-	int16_t torque_value_int = (int16_t) (this->direction * torque / this->torque_limit * 32767.0);
+	int16_t torque_value_int = (int16_t) (this->_config.direction * torque / this->torque_limit * 32767.0);
 	int32_t target_input = (int32_t) torque_value_int;
 
 	uint8_t ret = this->setTarget(target_input);
@@ -358,7 +357,7 @@ uint8_t SimplexMotionMotor::setTarget(int32_t target) {
 }
 
 // ==============================================================
-uint8_t SimplexMotionMotor::getStatus(simplexmotion_status *status) {
+uint8_t SimplexMotionMotor::getStatus(simplexmotion_status_t *status) {
 	uint16_t status_map = 0;
 	uint8_t ret = this->readRegisters(SIMPLEXMOTION_REG_STATUS, 1, &status_map);
 
