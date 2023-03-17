@@ -75,7 +75,7 @@ typedef enum simplexmotion_callback_id {
 } simplexmotion_callback_id;
 
 typedef struct simplexmotion_callbacks {
-	core_utils_Callback error;
+	core_utils_Callback<void, void> error;
 } simplexmotion_callbacks;
 
 typedef struct simplexmotion_config_t {
@@ -92,8 +92,7 @@ public:
 	uint8_t init(simplexmotion_config_t config);
 	void start(simplexmotion_mode_t mode);
 
-	void registerCallback(simplexmotion_callback_id callback_id,
-			void (*callback)(void *argument, void *params), void *params);
+	void registerCallback(simplexmotion_callback_id callback_id, core_utils_Callback<void, void> callback);
 
 	uint8_t writeRegisters(uint16_t address, uint16_t num_registers,
 			uint16_t *data);

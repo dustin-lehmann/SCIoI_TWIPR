@@ -38,6 +38,9 @@ extern SPI_HandleTypeDef hspi2;
 
 #define BOARD_CS_IMU_PORT GPIOB
 #define BOARD_CS_IMU_PIN GPIO_PIN_12
+
+extern SPI_HandleTypeDef hspi1;
+#define BOARD_SPI_CM4 &hspi1
 #endif
 
 
@@ -64,6 +67,9 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 #define BOARD_DEBUG_UART_DMA_RX &hdma_usart1_rx
 #define BOARD_DEBUG_UART_DMA_TX &hdma_usart1_tx
 #endif
+
+
+
 
 
 #endif

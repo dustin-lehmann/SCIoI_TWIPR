@@ -14,10 +14,10 @@ float gyr_y[128];
 float gyr_z[128];
 
 // TODO: This is blocking and annoying
-bmi160_gyr_calib core_sensors_GyroCalibration(BMI160 *imu, uint8_t samples,
+bmi160_gyr_calib_t core_sensors_GyroCalibration(BMI160 *imu, uint8_t samples,
 		bool resetCalibration) {
 
-	bmi160_gyr_calib calib;
+	bmi160_gyr_calib_t calib;
 
 	if (resetCalibration) {
 		imu->gyr_calib.x = 0.0;

@@ -11,31 +11,93 @@
 #include "stdint.h"
 #include "core_utils_functionpointer.h"
 
-class core_utils_Callback {
+class Callback {
 public:
-	core_utils_Callback();
-	core_utils_Callback(void (*callback)(void *argument, void *params),
-			void *params);
+	Callback(){
 
-//	FunctionPointer function;
-	void (*callback)(void *argument, void *params);
-	void *params;
-
-	void call();
-	void call(void *argument);
-
-	void operator()(void *argument) {
-		return this->call(argument);
 	}
 
-	void operator()() {
-		return this->call();
+	virtual void call(){
+
 	}
 
-	uint8_t registered = 0;
+	virtual void call(void* argument){
+
+	}
 private:
 
 };
+
+template<typename R, typename A>
+class core_utils_Callback: public Callback {
+public:
+	core_utils_Callback() {
+		this->registered = 0;
+	}
+	core_utils_Callback(R (*function)(A)) {
+		_fp = core_utils_FunctionPointer<R, A>(function);
+		this->registered = 1;
+	}
+
+	template<typename T>
+	core_utils_Callback(T *object, R (T::*member)(A)) {
+		_fp = core_utils_FunctionPointer<R,A>(object, member);
+		this->registered = 1;
+	}
+
+	R call(A argument){
+		return this->_fp(argument);
+	}
+//
+//	void operator()(void *argument) {
+//		return this->call(argument);
+//	}
+//
+//	void operator()() {
+//		return this->call();
+//	}
+
+	uint8_t registered = 0;
+private:
+	core_utils_FunctionPointer<R, A> _fp;
+};
+
+
+template<typename R>
+class core_utils_Callback<R, void>: public Callback {
+public:
+	core_utils_Callback() {
+		this->registered = 0;
+	}
+	core_utils_Callback(R (*function)(void)) {
+		_fp = core_utils_FunctionPointer<R, void>(function);
+		this->registered = 1;
+	}
+
+	template<typename T>
+	core_utils_Callback(T *object, R (T::*member)(void)) {
+		_fp = core_utils_FunctionPointer<R,void>(object, member);
+		this->registered = 1;
+	}
+
+	R call() {
+		return this->_fp();
+	}
+//
+//	void operator()(void *argument) {
+//		return this->call(argument);
+//	}
+//
+//	void operator()() {
+//		return this->call();
+//	}
+
+	uint8_t registered = 0;
+private:
+	core_utils_FunctionPointer<R, void> _fp;
+};
+
+
 
 class core_utils_Notification {
 public:

@@ -11,13 +11,25 @@
 #include "stdint.h"
 #include "../core_default_config.h"
 
-class core_utils_Buffer {
+class Buffer {
 public:
-	uint8_t buffer[CORE_CONFIG_BUFFER_LEN] = { 0 };
-	uint16_t len;
+	Buffer() {
+
+	}
+	uint8_t* data_ptr;
+	uint16_t len = 0;
 };
 
-template<int num>
+template <int size>
+class core_utils_Buffer: public Buffer {
+public:
+	core_utils_Buffer<size>(){
+		this->data_ptr = this->buffer;
+	}
+	uint8_t buffer[size] = { 0 };
+};
+
+template<int num, int size>
 class core_utils_BufferQueue {
 public:
 	core_utils_BufferQueue() {
@@ -28,9 +40,9 @@ public:
 
 	uint8_t overflow;
 
-	uint8_t write(core_utils_Buffer *buffer) {
+	uint8_t write(Buffer *buffer) {
 		for (int i = 0; i < buffer->len; i++) {
-			this->buffers[this->idx_write].buffer[i] = buffer->buffer[i];
+			this->buffers[this->idx_write].data_ptr[i] = buffer->data_ptr[i];
 		}
 
 		this->buffers[this->idx_write].len = buffer->len;
@@ -39,13 +51,13 @@ public:
 
 	uint8_t write(uint8_t *buffer, uint16_t len) {
 		for (int i = 0; i < len; i++) {
-			this->buffers[this->idx_write].buffer[i] = buffer[i];
+			this->buffers[this->idx_write].data_ptr[i] = buffer[i];
 		}
 		this->buffers[this->idx_write].len = len;
 		return this->inc_write();
 	}
 
-	core_utils_Buffer* getWritePointer() {
+	Buffer* getWritePointer() {
 		return &this->buffers[this->idx_write];
 	}
 
@@ -54,7 +66,7 @@ public:
 		this->inc_write();
 	}
 
-	uint8_t read(core_utils_Buffer *buffer) {
+	uint8_t read(Buffer *buffer) {
 		if (this->available() < 1) {
 			return 0;
 		}
@@ -67,7 +79,7 @@ public:
 			return 0;
 		}
 		for (int i = 0; i < this->buffers[this->idx_read].len; i++) {
-			buffer[i] = this->buffers[this->idx_read].buffer[i];
+			buffer[i] = this->buffers[this->idx_read].data_ptr[i];
 		}
 
 		uint8_t len = this->buffers[this->idx_read].len;
@@ -79,18 +91,18 @@ public:
 		if (this->available() < 1) {
 			return 0;
 		}
-		*buffer = &this->buffers[this->idx_read].buffer[0];
+		*buffer = &this->buffers[this->idx_read].data_ptr[0];
 
 		uint8_t len = this->buffers[this->idx_read].len;
 		this->inc_read();
 		return len;
 	}
-	core_utils_Buffer* read() {
+	Buffer* read() {
 		if (this->available() < 1) {
 			return 0;
 		}
 
-		core_utils_Buffer *buffer = &this->buffers[this->idx_read];
+		Buffer *buffer = &this->buffers[this->idx_read];
 		this->inc_read();
 		return buffer;
 	}
@@ -113,7 +125,7 @@ public:
 	}
 
 private:
-	core_utils_Buffer buffers[num];  // Array of buffers
+	core_utils_Buffer<size> buffers[num];  // Array of buffers
 	const uint8_t num_buffers = num; // Number of buffers for the queue
 	uint8_t idx_write;
 	uint8_t idx_read;

@@ -17,22 +17,6 @@ typedef struct twipr_logging_general_t {
 	uint32_t tick;
 } twipr_logging_general_t;
 
-typedef struct twipr_logging_sensors_t {
-	twipr_sensors_data_t data;
-} twipr_logging_sensors_t;
-
-typedef struct twipr_logging_estimation_t {
-	twipr_estimation_state_t state;
-} twipr_logging_estimation_t;
-
-typedef struct twipr_logging_control_t {
-	twipr_control_status_t control_status;
-	twipr_control_mode_t control_mode;
-	twipr_control_input_t input;
-	twipr_control_output_t output;
-	uint32_t trajectory_step;
-} twipr_logging_control_t;
-
 typedef struct twipr_logging_sample_t {
 	twipr_logging_general_t general;
 	twipr_logging_control_t control;
@@ -43,5 +27,6 @@ typedef struct twipr_logging_sample_t {
 typedef struct twipr_logging_sample_small {
 
 } twipr_logging_sample_small;
+
 
 #endif /* LOGGING_TWIPR_LOGGING_H_ */

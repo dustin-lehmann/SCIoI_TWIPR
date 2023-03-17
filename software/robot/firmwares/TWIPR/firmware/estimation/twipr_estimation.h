@@ -13,6 +13,9 @@
 #include "simplexmotion.hpp"
 #include "twipr_sensors.h"
 
+#define TWIPR_ESTIMATION_FREQUENCY 200
+#define TWIPR_ESTIMATION_STATE_BUFFER_SIZE TWIPR_ESTIMATION_FREQUENCY*1
+
 typedef enum twipr_estimation_status_t {
 	TWIPR_ESTIMATION_STATUS_NONE = 0,
 	TWIPR_ESTIMATION_STATUS_IDLE = 1,
@@ -36,10 +39,10 @@ typedef enum twipr_estimation_callback_id {
 } twipr_estimation_callback_id;
 
 typedef struct twipr_estimation_callbacks {
-	core_utils_Callback update;
-	core_utils_Callback error;
-	core_utils_Callback angle;
-	core_utils_Callback slip;
+	core_utils_Callback<void, void> update;
+	core_utils_Callback<void, void> error;
+	core_utils_Callback<void, void> angle;
+	core_utils_Callback<void, void> slip;
 } twipr_estimation_callbacks;
 
 typedef struct twipr_estimation_config_t {
@@ -48,6 +51,10 @@ typedef struct twipr_estimation_config_t {
 	bool enable_angle_threshold;
 	float angle_threshold;
 } twipr_estimation_config_t;
+
+typedef struct twipr_logging_estimation_t {
+	twipr_estimation_state_t state;
+} twipr_logging_estimation_t;
 
 class TWIPR_Estimation {
 public:
@@ -59,10 +66,16 @@ public:
 
 	void update();
 
+	void task_function();
+
+	twipr_logging_estimation_t getSample();
+
 	void registerCallback(twipr_estimation_callback_id callback_id,
 			void (*callback)(void *argument, void *params), void *params);
 
 	twipr_estimation_state_t getState();
+	twipr_estimation_state_t getMeanState();
+
 	void setState(twipr_estimation_state_t state);
 
 	twipr_estimation_status_t getStatus();
@@ -70,11 +83,15 @@ public:
 	twipr_model *model;
 	twipr_estimation_status_t status;
 	twipr_estimation_state_t state;
-
-private:
-	TWIPR_Sensors *sensors;
+	twipr_estimation_state_t mean_state;
 	twipr_estimation_config_t config;
-	uint16_t freq;
+private:
+	TWIPR_Sensors *_sensors;
+	uint16_t _freq;
+	twipr_estimation_state_t _state_buffer[TWIPR_ESTIMATION_STATE_BUFFER_SIZE];
+	uint16_t _state_buffer_index = 0;
+	osSemaphoreId_t _semaphore;
+	Madgwick _orientation_fusion;
 };
 
 void estimation_task(void *estimation);

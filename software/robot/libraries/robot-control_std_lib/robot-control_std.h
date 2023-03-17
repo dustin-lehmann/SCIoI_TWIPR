@@ -16,7 +16,7 @@ extern core_hardware_LED led1;
 extern core_hardware_LED led2;
 extern core_hardware_LED led_act;
 
-extern core_comm_UartInterface debug_uart;
+extern UART debug_uart;
 
 void robot_control_init();
 void robot_control_start();

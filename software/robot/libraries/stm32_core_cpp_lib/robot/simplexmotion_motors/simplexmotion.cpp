@@ -66,7 +66,6 @@ uint8_t SimplexMotionMotor::init(simplexmotion_config_t config) {
 
 	this->_config = config;
 
-
 	this->_checked = 0;
 	this->_init = 0;
 
@@ -86,7 +85,7 @@ uint8_t SimplexMotionMotor::init(simplexmotion_config_t config) {
 	// TODO
 
 	// Read the torque limit
-	float torque_limit = this->getTorqueLimit();
+//	float torque_limit = this->getTorqueLimit();
 
 	// Read the ...
 
@@ -230,6 +229,7 @@ uint8_t SimplexMotionMotor::beep(uint16_t amplitude) {
 // ==============================================================
 uint8_t SimplexMotionMotor::reset() {
 
+	return 0;
 }
 
 // ==============================================================
@@ -327,6 +327,7 @@ float SimplexMotionMotor::getTorqueLimit() {
 // ==============================================================
 float SimplexMotionMotor::getTorque() {
 
+	return 0.0;
 }
 
 // ==============================================================
@@ -337,7 +338,8 @@ uint8_t SimplexMotionMotor::setTorque(float torque) {
 	}
 
 	// Calculate the corresponding torque value
-	int16_t torque_value_int = (int16_t) (this->_config.direction * torque / this->torque_limit * 32767.0);
+	int16_t torque_value_int = (int16_t) (this->_config.direction * torque
+			/ this->torque_limit * 32767.0);
 	int32_t target_input = (int32_t) torque_value_int;
 
 	uint8_t ret = this->setTarget(target_input);
@@ -350,7 +352,7 @@ uint8_t SimplexMotionMotor::setTarget(int32_t target) {
 	uint16_t tx_data[2] = { 0 };
 
 	tx_data[0] = target >> 16;
-	tx_data[1] =  target & 0xFFFF;
+	tx_data[1] = target & 0xFFFF;
 
 	ret = this->writeRegisters(SIMPLEXMOTION_REG_TARGET_INPUT, 2, tx_data);
 	return ret;
@@ -382,11 +384,9 @@ uint8_t SimplexMotionMotor::getStatus(simplexmotion_status_t *status) {
 
 // ==============================================================
 void SimplexMotionMotor::registerCallback(simplexmotion_callback_id callback_id,
-		void (*callback)(void *argument, void *params), void *params) {
+		core_utils_Callback<void, void> callback) {
 	if (callback_id == SIMPLEXMOTION_CB_ERROR) {
-		this->callbacks.error.callback = callback;
-		this->callbacks.error.params = params;
-		this->callbacks.error.registered = true;
+		this->callbacks.error = callback;
 	}
 }
 

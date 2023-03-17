@@ -22,5 +22,8 @@ inline float rad2deg(float angle) {
 
 float mean(float* data, uint16_t len);
 
+float limit(float data, float min_value, float max_value);
+float limit(float data, float max_value);
+
 
 #endif /* CORE_UTILS_CORE_MATH_H_ */

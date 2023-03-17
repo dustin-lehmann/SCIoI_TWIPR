@@ -9,14 +9,13 @@
 
 core_debug_Interface *active_interface = NULL;
 
-core_comm_UartInterface_config uart_config = { .uart = { .mode =
+core_comm_UartInterface_config_t uart_config = { .uart = { .mode =
 		CORE_HARDWARE_UART_MODE_DMA, .cobs_encode_rx = 0, .cobs_encode_tx = 0,
-		.queues = 1 }, .use_rtos = 1, .use_protocol = 0, .use_queue = 0,
-		.rx_callback_value = CORE_COMM_SERIAL_SOCKET_RX_CB_BUF };
+		.queues = 1 }, .use_protocol = 0, .use_queue = 0 };
 
 /* ============================================================================= */
 core_debug_Interface::core_debug_Interface(debug_interface_type interface_type,
-		UART_HandleTypeDef *huart){
+		UART_HandleTypeDef *huart) {
 
 	active_interface = this;
 	this->type = interface_type;
@@ -43,10 +42,10 @@ void core_debug_Interface::start() {
 	}
 }
 
-
-void core_debug_Interface::write(uint8_t* buffer, uint16_t len){
+/* ============================================================================= */
+void core_debug_Interface::write(uint8_t *buffer, uint16_t len) {
 	if (this->type == CORE_DEBUG_INTERFACE_UART) {
-		if (this->uart_interface.state != CORE_COMM_SERIAL_SOCKET_STATE_RUN){
+		if (this->uart_interface.status != CORE_COMM_SERIAL_SOCKET_STATE_RUN) {
 			return; // TODO: We should put the stuff into a buffer here
 		} else {
 			this->uart_interface.send(buffer, len);

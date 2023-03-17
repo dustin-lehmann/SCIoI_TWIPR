@@ -12,11 +12,13 @@
 #include "core_bytes.h"
 #include "core_errors.h"
 #include "core_math.h"
+#include "core_utils_gpio.h"
 #include "core_utils_BufferQueue.h"
 #include "core_utils_Callback.h"
 #include "core_utils_RingBuffer.h"
 #include "core_utils_functionpointer.h"
 #include "core_utils_registermap.h"
+
 
 inline void nop(){
 

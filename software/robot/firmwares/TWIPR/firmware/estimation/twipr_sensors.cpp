@@ -88,3 +88,9 @@ void TWIPR_Sensors::_readMotorSpeed() {
 
 }
 
+/* ======================================================= */
+twipr_logging_sensors_t TWIPR_Sensors::getSample(){
+	twipr_logging_sensors_t sample;
+	sample.data = this->getData();
+}
+

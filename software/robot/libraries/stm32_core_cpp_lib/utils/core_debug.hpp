@@ -8,7 +8,7 @@
 #ifndef UTILS_CORE_DEBUG_HPP_
 #define UTILS_CORE_DEBUG_HPP_
 
-#include "../communication/serial_socket/core_comm_SerialSocket.h"
+#include <communication/uart_interface/core_comm_UartInterface.h>
 #include "../hardware/UART/core_hardware_UART.h"
 
 typedef enum debug_interface_type {
@@ -41,7 +41,7 @@ private:
 
 	void write(uint8_t* buffer, uint16_t len);
 	UART_HandleTypeDef* huart;
-	core_comm_UartInterface uart_interface;
+	core_comm_UartInterface<10, 128> uart_interface;
 	debug_interface_type type;
 
 	void rx_callback();

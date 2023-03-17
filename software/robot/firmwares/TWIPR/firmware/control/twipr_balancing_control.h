@@ -29,11 +29,11 @@ typedef enum twipr_balancing_control_status_t {
 } twipr_balancing_control_status_t;
 
 typedef enum twipr_balancing_control_callback_id_t {
-	TWIPR_CONTROL_CALLBACK_ERROR = 1,
+	TWIPR_BALANCING_CONTROL_CALLBACK_ERROR = 1,
 } twipr_balancing_control_callback_id_t;
 
 typedef struct twipr_balancing_control_config_t {
-	float K[2][5];
+	float K[8];
 } twipr_balancing_control_config_t;
 
 typedef struct twipr_balancing_control_input_t {
@@ -61,7 +61,7 @@ public:
 			twipr_balancing_control_input_t input,
 			twipr_balancing_control_output_t *output);
 
-	void set_K(float K[2][5]);
+	void set_K(float K[8]);
 	void setMode(twipr_balancing_control_mode_t mode);
 
 	twipr_balancing_control_status_t status;

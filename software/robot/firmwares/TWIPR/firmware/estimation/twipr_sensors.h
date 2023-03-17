@@ -12,6 +12,7 @@
 #include "robot-control_board.h"
 #include "twipr_drive.h"
 
+
 typedef struct twipr_sensors_config_t {
 	TWIPR_Drive *drive;
 } twipr_sensors_config_t;
@@ -22,6 +23,10 @@ typedef struct twipr_sensors_data_t {
 	bmi160_acc acc;
 	bmi160_gyr gyr;
 } twipr_sensors_data_t;
+
+typedef struct twipr_logging_sensors_t {
+	twipr_sensors_data_t data;
+} twipr_logging_sensors_t;
 
 typedef enum twipr_sensors_status_t {
 	TWIPR_SENSORS_STATUS_ERROR = -1,
@@ -39,6 +44,7 @@ public:
 	void update();
 	uint8_t calibrate();
 
+	twipr_logging_sensors_t getSample();
 	twipr_sensors_data_t getData();
 	twipr_sensors_status_t getStatus();
 

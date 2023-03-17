@@ -1,66 +1,73 @@
 /*
  * twipr_communication.h
  *
- *  Created on: Feb 22, 2023
- *      Author: lehmann_workstation
+ *  Created on: 12 Mar 2023
+ *      Author: Dustin Lehmann
  */
 
 #ifndef COMMUNICATION_TWIPR_COMMUNICATION_H_
 #define COMMUNICATION_TWIPR_COMMUNICATION_H_
 
-#include "core.h"
-#include "twipr_messages.h"
+#include "twipr_uart_communication.h"
+#include "twipr_spi_communication.h"
+#include "firmware_defs.h"
 
-#define MSG_COMMAND_WRITE 0x01
-#define MSG_COMMAND_READ 0x02
-#define MSG_COMMAND_ANSWER 0x03
-#define MSG_COMMAND_STREAM 0x04
-#define MSG_COMMAND_EVENT 0x05
-#define MSG_COMMAND_MSG 0x06
-#define MSG_COMMAND_FCT 0x07
-#define MSG_COMMAND_ECHO 0x08
+#define TWIPR_COMM_ERROR_FLAG_UNKNOWN 0x01
+#define TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS 0x02
+#define TWIPR_COMM_ERROR_FLAG_WRITE 0x03
+#define TWIPR_COMM_ERROR_FLAG_READ 0x04
+#define TWIPR_COMM_ERROR_FLAG_LEN 0x05
+#define TWIPR_COMM_ERROR_FLAG_MSG_TYPE 0x06
 
-typedef struct twipr_comm_config_t {
+typedef enum twipr_communication_callback_id_t {
+	TWIPR_COMM_CALLBACK_NEW_TRAJECTORY,
+} twipr_communication_callback_id_t;
+
+typedef struct twipr_communication_callbacks_t {
+	core_utils_Callback<void, uint16_t> new_trajectory;
+}twipr_communication_callbacks_t;
+
+typedef struct twipr_communication_config_t {
 	UART_HandleTypeDef *huart;
-	RegisterMap *register_map;
-} twipr_comm_config_t;
+	SPI_HandleTypeDef *hspi;
+	core_utils_GPIO notification_gpio;
+	RegisterMap *reg_map_control;
+	RegisterMap *reg_map_general;
+	twipr_logging_sample_t *sample_tx_buffer;
+	uint16_t len_sample_buffer;
+	twipr_control_trajectory_input_t *trajectory_rx_buffer;
+	uint16_t len_trajectory_buffer;
+} twipr_communication_config_t;
 
-typedef struct twipr_comm_filter_t {
-	uint8_t address1;
-	uint8_t address2;
-	core_utils_Callback callback;
-} twipr_comm_filter_t;
-
-class TWIPR_Communication {
+class TWIPR_CommunicationManager {
 public:
-	TWIPR_Communication();
+	TWIPR_CommunicationManager();
 
-	void init(twipr_comm_config_t config);
+	void init(twipr_communication_config_t config);
 	void start();
 
-	void send(core_comm_SerialMessage msg);
-	void send(core_comm_SerialMessage *msg);
-	void send(uint8_t cmd, uint8_t module, uint16_t address, uint8_t flag, uint8_t* data, uint8_t len);
-	void sendRaw(uint8_t* buffer, uint16_t len);
 
-	void task_loop();
+	void registerCallback(twipr_communication_callback_id_t callback_id, core_utils_Callback<void, uint16_t> callback);
 
-	osThreadId_t thread;
-	xTaskHandle task;
+	void sampleBufferFull();
 
-	uint32_t last_received_message_tick = 0;
+	twipr_communication_config_t config;
+	TWIPR_UART_Communication uart_interface;
+	TWIPR_SPI_Communication spi_interface;
 private:
 
-	void _handleIncomingMessages();
-	void _handleMessage_read(core_comm_SerialMessage* msg);
-	void _handleMessage_write(core_comm_SerialMessage* msg);
-	void _handleMessage_function(core_comm_SerialMessage* msg);
+	twipr_communication_callbacks_t _callbacks;
 
-	core_comm_UartInterface uart_cm4;
-	RegisterMap *register_map;
+	void _uart_handleMsg_write_callback(core_comm_SerialMessage *msg);
+	void _uart_handleMsg_read_callback(core_comm_SerialMessage *msg);
+	void _uart_handleMsg_func_callback(core_comm_SerialMessage *msg);
+
+	void _spi_rxTrajectory_callback(uint16_t len);
+	void _spi_txSamples_callback(uint16_t len);
+
+	void _uartResponseError(core_comm_SerialMessage *incoming_message,
+			uint8_t error_code);
+
 };
-
-void twipr_comm_task(void *argument);
-void uart_cm4_rx_callback(void *argument, void *parameters);
 
 #endif /* COMMUNICATION_TWIPR_COMMUNICATION_H_ */

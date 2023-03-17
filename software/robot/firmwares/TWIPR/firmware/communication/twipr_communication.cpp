@@ -1,206 +1,162 @@
 /*
  * twipr_communication.cpp
  *
- *  Created on: Feb 22, 2023
- *      Author: lehmann_workstation
+ *  Created on: 12 Mar 2023
+ *      Author: Dustin Lehmann
  */
 
-#include <communication/twipr_communication.h>
+#include "twipr_communication.h"
 
-static core_comm_UartInterface_config twipr_communication_uart_cm4_interface_config =
-		{ .uart = { .mode = CORE_HARDWARE_UART_MODE_DMA, .cobs_encode_rx = 1,
-				.cobs_encode_tx = 1, .queues = 1, }, .use_rtos = 1,
-				.use_protocol = 1, .use_queue = 1, .rx_callback_value =
-						CORE_COMM_SERIAL_SOCKET_RX_CB_MSG };
+static core_comm_SerialMessage outgoing_msg;
 
-//static core_comm_UartInterface_config twipr_communication_uart_ext_interface_config =
-//		{ .uart = { .mode = CORE_HARDWARE_UART_MODE_DMA, .cobs_encode_rx = 1,
-//				.cobs_encode_tx = 1, .queues = 1, }, .use_rtos = 1,
-//				.use_protocol = 1, .use_queue = 0, .rx_callback_value =
-//						CORE_COMM_SERIAL_SOCKET_RX_CB_MSG };
-
-static const osThreadAttr_t task_attributes = { .name = "comm_task",
-		.stack_size = 512 * 4, .priority = (osPriority_t) osPriorityNormal };
-
-core_comm_SerialMessage incoming_msg;
-core_comm_SerialMessage outgoing_msg;
-
-uint8_t function_output_buffer[128] = { 0 };
-
-/* =======================================================*/
-TWIPR_Communication::TWIPR_Communication() {
+TWIPR_CommunicationManager::TWIPR_CommunicationManager() {
 
 }
 
-/* =======================================================*/
-void TWIPR_Communication::init(twipr_comm_config_t config) {
+/* ====================================================================== */
+void TWIPR_CommunicationManager::init(twipr_communication_config_t config) {
+	this->config = config;
 
-	// Copy the register map
-	this->register_map = config.register_map;
+	// Initialize the UART CM4 Interface
+	twipr_uart_comm_config_t uart_config = { .huart = this->config.huart };
+	this->uart_interface.init(uart_config);
 
-	// Initialize the UART interface to the Raspberry Pi
-	this->uart_cm4.init(config.huart,
-			twipr_communication_uart_cm4_interface_config);
-	this->uart_cm4.registerCallback(CORE_COMM_SERIAL_SOCKET_CB_RX,
-			uart_cm4_rx_callback, this);
+	this->uart_interface.registerCallback(TWIPR_UART_COMM_CALLBACK_MSG_WRITE,
+			core_utils_Callback<void, core_comm_SerialMessage*>(this,
+					&TWIPR_CommunicationManager::_uart_handleMsg_write_callback));
+
+	this->uart_interface.registerCallback(TWIPR_UART_COMM_CALLBACK_MSG_READ,
+			core_utils_Callback<void, core_comm_SerialMessage*>(this,
+					&TWIPR_CommunicationManager::_uart_handleMsg_read_callback));
+
+	this->uart_interface.registerCallback(TWIPR_UART_COMM_CALLBACK_MSG_FUNC,
+			core_utils_Callback<void, core_comm_SerialMessage*>(this,
+					&TWIPR_CommunicationManager::_uart_handleMsg_func_callback));
+
+	// Initialize the SPI Interface
+	twipr_spi_comm_config_t spi_config = { .hspi = this->config.hspi,
+			.sample_buffer = this->config.sample_tx_buffer, .len_sample_buffer =
+					this->config.len_sample_buffer, .trajectory_buffer =
+					this->config.trajectory_rx_buffer, .len_trajectory_buffer =
+					this->config.len_trajectory_buffer };
+	this->spi_interface.init(spi_config);
+
+	this->spi_interface.registerCallback(TWIPR_SPI_COMM_CALLBACK_TRAJECTORY_RX,
+			core_utils_Callback<void, uint16_t>(this,
+					&TWIPR_CommunicationManager::_spi_rxTrajectory_callback));
+	this->spi_interface.registerCallback(TWIPR_SPI_COMM_CALLBACK_SAMPLE_TX,
+			core_utils_Callback<void, uint16_t>(this,
+					&TWIPR_CommunicationManager::_spi_txSamples_callback));
 }
+/* ====================================================================== */
+void TWIPR_CommunicationManager::start() {
 
-/* =======================================================*/
-void TWIPR_Communication::start() {
+	// Start the UART Interface
+	this->uart_interface.start();
 
-	// Start the UART interfaces
-	this->uart_cm4.start();
-
-	// Start the board UART interface
-//	this->uart_ext.start();
-
-// Start the task
-	this->thread = osThreadNew(twipr_comm_task, this, &task_attributes);
+	// Start the SPI Interface
+	this->spi_interface.start();
 }
-
-/* =======================================================*/
-void TWIPR_Communication::send(uint8_t cmd, uint8_t module, uint16_t address,
-		uint8_t flag, uint8_t *data, uint8_t len) {
-
-	outgoing_msg.cmd = cmd;
-	outgoing_msg.address_1 = module;
-	outgoing_msg.address_2 = address >> 8;
-	outgoing_msg.address_3 = address;
-	outgoing_msg.flag = flag;
-
-	for (int i = 0; i < len; i++) {
-		outgoing_msg.data[i] = data[i];
+/* ====================================================================== */
+void TWIPR_CommunicationManager::registerCallback(twipr_communication_callback_id_t callback_id, core_utils_Callback<void, uint16_t> callback){
+	switch (callback_id){
+	case TWIPR_COMM_CALLBACK_NEW_TRAJECTORY: {
+		this->_callbacks.new_trajectory = callback;
 	}
-	outgoing_msg.len = len;
-	this->send(&outgoing_msg);
-}
-
-/* =======================================================*/
-void TWIPR_Communication::send(core_comm_SerialMessage *msg) {
-
-	// Check the message
-
-	this->uart_cm4.send(msg);
-}
-
-/* =======================================================*/
-void twipr_comm_task(void *argument) {
-
-	TWIPR_Communication *comm = (TWIPR_Communication*) argument;
-	comm->task = xTaskGetCurrentTaskHandle();
-
-	xTaskNotifyGive(comm->task);
-	nop();
-
-//	uint32_t kernel_ticks = 0;
-	while (true) {
-//		kernel_ticks = osKernelGetTickCount();
-
-		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-		// Do stuff
-		comm->task_loop();
-
-//		osDelayUntil(kernel_ticks + (uint32_t) 1);
 	}
 }
 
-/* =======================================================*/
-void TWIPR_Communication::task_loop() {
-	// Check if there is a new message in the CM4 UART
-	if (this->uart_cm4.rx_queue.available()) {
-		this->_handleIncomingMessages();
+/* ====================================================================== */
+void TWIPR_CommunicationManager::_uart_handleMsg_write_callback(
+		core_comm_SerialMessage *msg) {
+
+	RegisterMap *reg_map;
+
+	switch (msg->address_1) {
+	case TWIPR_FIRMWARE_REGISTER_MAP_GENERAL: {
+		reg_map = this->config.reg_map_general;
+		break;
 	}
-}
-
-/* =======================================================*/
-void TWIPR_Communication::_handleIncomingMessages() {
-	// Loop through all the messages in the rx queue
-	while (this->uart_cm4.rx_queue.available()) {
-		this->uart_cm4.rx_queue.read(&incoming_msg);
-
-		// Check if the message is correct
-		// TODO
-
-		// Handle the different addresses
-
-		// Handle the different commands
-		switch (incoming_msg.cmd) {
-		case MSG_COMMAND_WRITE: {
-			this->_handleMessage_write(&incoming_msg);
-			break;
-		}
-		case MSG_COMMAND_READ: {
-			this->_handleMessage_read(&incoming_msg);
-			break;
-		}
-		case MSG_COMMAND_EVENT: {
-			nop();
-			break;
-		}
-		case MSG_COMMAND_MSG: {
-			nop();
-			break;
-		}
-		case MSG_COMMAND_FCT: {
-			this->_handleMessage_function(&incoming_msg);
-			break;
-		}
-		case MSG_COMMAND_ECHO: {
-			this->send(&incoming_msg);
-			break;
-		}
-		default: {
-			continue;
-			break;
-		}
-		}
-		this->last_received_message_tick = osKernelGetTickCount();
+	case TWIPR_FIRMWARE_REGISTER_MAP_CONTROL: {
+		reg_map = this->config.reg_map_control;
+		break;
 	}
-}
-
-/* =======================================================*/
-void TWIPR_Communication::_handleMessage_write(core_comm_SerialMessage *msg) {
-	// Check if the module is the default module
-	if (!msg->address_1 == 0x00) {
-		return; // TODO
+	default: {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS);
+		return;
+		break;
+	}
 	}
 
-	// Check if the address exists in the register map
 	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
-	if (!this->register_map->hasEntry(address)) {
+	if (!reg_map->hasEntry(address)){
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS);
 		return;
 	}
-	// Check if the length of the message is correct
-	if (this->register_map->getSize(address) != msg->len) {
-		return; // TODO
+	if (reg_map->getSize(address) != msg->len) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_LEN);
+		return;
 	}
-
-	// Write the entry
-	this->register_map->write(address, msg->data);
-}
-
-/* =======================================================*/
-void TWIPR_Communication::_handleMessage_read(core_comm_SerialMessage *msg) {
-
-	// Check if the module is the default module
-	if (!msg->address_1 == 0x00) {
-		return; // TODO
+	if (reg_map->getType(address) != REGISTER_ENTRY_DATA) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_MSG_TYPE);
+		return;
 	}
-
-	// Check if the address exists in the register map
-	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
-
-	if (!this->register_map->hasEntry(address)) {
+	if (reg_map->getReadWriteSetting(address) == REGISTER_ENTRY_READ) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRITE);
 		return;
 	}
 
-	// Check if this is a data entry
-	if (this->register_map->getType(address) != REGISTER_ENTRY_DATA) {
+	reg_map->write(address, msg->data_ptr);
+
+	outgoing_msg.address_1 = msg->address_1;
+	outgoing_msg.address_1 = msg->address_2;
+	outgoing_msg.address_1 = msg->address_3;
+	outgoing_msg.cmd = MSG_COMMAND_ANSWER;
+	outgoing_msg.flag = 1;
+	outgoing_msg.len = 0;
+
+	this->uart_interface.send(&outgoing_msg);
+
+}
+/* ====================================================================== */
+void TWIPR_CommunicationManager::_uart_handleMsg_read_callback(
+		core_comm_SerialMessage *msg) {
+
+	RegisterMap *reg_map;
+
+	switch (msg->address_1) {
+	case TWIPR_FIRMWARE_REGISTER_MAP_GENERAL: {
+		reg_map = this->config.reg_map_general;
+		break;
+	}
+	case TWIPR_FIRMWARE_REGISTER_MAP_CONTROL: {
+		reg_map = this->config.reg_map_control;
+		break;
+	}
+	default: {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS);
+		return;
+		break;
+	}
+	}
+
+	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
+
+	if (!reg_map->hasEntry(address)){
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS);
+		return;
+	}
+	if (reg_map->getType(address) != REGISTER_ENTRY_DATA) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_MSG_TYPE);
+		return;
+	}
+	if (reg_map->getReadWriteSetting(address) == REGISTER_ENTRY_WRITE) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_READ);
 		return;
 	}
 
 	// Read the entry into the outgoing message
-	outgoing_msg.len = this->register_map->read(address, outgoing_msg.data);
+	outgoing_msg.len = reg_map->read(address, outgoing_msg.data_ptr);
 
 	// Construct the outgoing message
 	outgoing_msg.address_1 = msg->address_1;
@@ -209,32 +165,46 @@ void TWIPR_Communication::_handleMessage_read(core_comm_SerialMessage *msg) {
 	outgoing_msg.flag = 1;
 	outgoing_msg.cmd = MSG_COMMAND_ANSWER;
 
-	this->send(&outgoing_msg);
+	this->uart_interface.send(&outgoing_msg);
 }
-/* =======================================================*/
-void TWIPR_Communication::_handleMessage_function(
+
+/* ====================================================================== */
+void TWIPR_CommunicationManager::_uart_handleMsg_func_callback(
 		core_comm_SerialMessage *msg) {
+	RegisterMap *reg_map;
 
-	// Check if the module is the default module
-	if (!msg->address_1 == 0x00) {
-		return; // TODO
+	switch (msg->address_1) {
+	case TWIPR_FIRMWARE_REGISTER_MAP_GENERAL: {
+		reg_map = this->config.reg_map_general;
+		break;
+	}
+	case TWIPR_FIRMWARE_REGISTER_MAP_CONTROL: {
+		reg_map = this->config.reg_map_control;
+		break;
+	}
+	default: {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS);
+		return;
+		break;
+	}
 	}
 
-	// Check if the address exists in the register map and is a function
 	uint16_t address = uint8_to_uint16(msg->address_2, msg->address_3);
-
-	if (!this->register_map->hasEntry(address)) {
+	if (!reg_map->hasEntry(address)){
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_WRONG_ADDRESS);
 		return;
 	}
-
-	// Check if it is a function
-	if (this->register_map->getType(address) != REGISTER_ENTRY_FUNCTION) {
+	if (reg_map->getSize(address) != msg->len) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_LEN);
 		return;
+	}
+	if (reg_map->getType(address) != REGISTER_ENTRY_FUNCTION) {
+		this->_uartResponseError(msg, TWIPR_COMM_ERROR_FLAG_MSG_TYPE);
 	}
 
 	// Execute the function and store the data
-	uint8_t ret_size = this->register_map->execute(address, msg->data,
-			outgoing_msg.data);
+	uint8_t ret_size = reg_map->execute(address, msg->data_ptr,
+			outgoing_msg.data_ptr);
 
 	// Send back a message if the function returns something
 	if (ret_size > 0) {
@@ -244,22 +214,36 @@ void TWIPR_Communication::_handleMessage_function(
 		outgoing_msg.flag = 1;
 		outgoing_msg.cmd = MSG_COMMAND_ANSWER;
 		outgoing_msg.len = ret_size;
-		this->send(&outgoing_msg);
-	}
-
-}
-
-/* =======================================================*/
-void uart_cm4_rx_callback(void *argument, void *parameters) {
-
-	TWIPR_Communication *comm = (TWIPR_Communication*) parameters;
-	if (comm->task != NULL) {
-//		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-		nop();
-
-		xTaskNotifyGive(comm->task);
-
-//		vTaskNotifyGiveFromISR(comm->task, &xHigherPriorityTaskWoken);
-//		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		this->uart_interface.send(&outgoing_msg);
 	}
 }
+
+/* ====================================================================== */
+void TWIPR_CommunicationManager::_uartResponseError(core_comm_SerialMessage* incoming_message, uint8_t error_code){
+	outgoing_msg.address_1 = incoming_message->address_1;
+	outgoing_msg.address_2 = incoming_message->address_2;
+	outgoing_msg.address_3 = incoming_message->address_3;
+	outgoing_msg.cmd = MSG_COMMAND_ANSWER;
+	outgoing_msg.flag = 0;
+	outgoing_msg.len = 1;
+	outgoing_msg.data_ptr[0] = error_code;
+	this->uart_interface.send(&outgoing_msg);
+}
+/* ====================================================================== */
+void TWIPR_CommunicationManager::_spi_rxTrajectory_callback(uint16_t len) {
+	// We have received a new trajectory by the CM4
+	if (this->_callbacks.new_trajectory.registered){
+		this->_callbacks.new_trajectory.call(len);
+	}
+}
+/* ====================================================================== */
+void TWIPR_CommunicationManager::sampleBufferFull(){
+	// Notify the CM4 that the sample buffer is full by writing a HIGH to the communication pin
+	this->config.notification_gpio.write(1);
+
+}
+/* ====================================================================== */
+void TWIPR_CommunicationManager::_spi_txSamples_callback(uint16_t len) {
+	this->config.notification_gpio.write(0);
+}
+

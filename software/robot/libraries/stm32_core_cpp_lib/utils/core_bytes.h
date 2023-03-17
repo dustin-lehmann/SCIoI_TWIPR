@@ -23,7 +23,6 @@ typedef union {
 	uint8_t u8[4];
 	uint16_t u16[2];
 	uint32_t u32;
-
 } bytesFields;
 
 float bytearray_to_float(uint8_t* bytearray);

@@ -13,8 +13,6 @@
 
 #include "bmi160_defs.h"
 
-#if CORE_CONFIG_USE_SPI
-
 #define BMI160_REG_CHIP_ID	0x00
 
 typedef struct bmi160_gyr_raw {
@@ -41,11 +39,11 @@ typedef struct bmi160_acc {
 	float z;
 } bmi160_acc;
 
-typedef struct bmi160_gyr_calib {
+typedef struct bmi160_gyr_calib_t {
 	float x = 0.0;
 	float y = 0.0;
 	float z = 0.0;
-} bmi160_gyr_calib;
+} bmi160_gyr_calib_t;
 
 typedef struct bmi160_acc_config_t {
 	uint8_t odr = BMI160_ACCEL_ODR_400HZ;
@@ -99,8 +97,6 @@ public:
 	uint8_t setAccConfig(uint8_t config, uint8_t range);
 	uint8_t setPowerMode(BMI160_PowerMode mode);
 
-
-
 	uint8_t writeRegister(uint8_t reg, uint8_t data);
 	uint8_t readRegister(uint8_t reg);
 	uint8_t readMultipleRegister(uint8_t reg, uint8_t *data, uint8_t len);
@@ -110,11 +106,10 @@ public:
 	bmi160_acc_raw acc_raw;
 	bmi160_acc acc;
 	uint32_t sensortime;
-	bmi160_gyr_calib gyr_calib;
+	bmi160_gyr_calib_t gyr_calib;
 private:
 
 	bmi160_config_t _config;
 
 };
-#endif
 #endif /* CORE_SENSORS_IMU_BMI160_H_ */
