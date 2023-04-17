@@ -1,0 +1,202 @@
+core_utils_Callback.h:16:2:Callback::Callback()	1
+core_utils_Callback.h:20:15:virtual void Callback::call()	1
+core_utils_Callback.h:24:15:virtual void Callback::call(void*)	1
+core_utils_registermap.h:25:15:virtual void RegisterEntry::write(void*)	1
+core_utils_registermap.h:28:15:virtual void RegisterEntry::write(uint8_t*)	1
+core_utils_registermap.h:31:18:virtual uint8_t RegisterEntry::readBytes(uint8_t*)	1
+core_utils_registermap.h:34:18:virtual uint8_t RegisterEntry::getSize()	1
+core_utils_registermap.h:37:18:virtual uint8_t RegisterEntry::getInputSize()	1
+core_utils_registermap.h:41:18:virtual uint8_t RegisterEntry::getOutputSize()	1
+core_utils_registermap.h:45:15:virtual void RegisterEntry::execute()	1
+core_utils_registermap.h:48:18:virtual uint8_t RegisterEntry::execute(uint8_t*, uint8_t*)	1
+core_utils_registermap.h:61:15:virtual void RegisterMap::write(uint16_t, void*)	1
+core_utils_registermap.h:63:15:virtual void RegisterMap::write(uint16_t, uint8_t*)	1
+core_utils_registermap.h:65:15:virtual void RegisterMap::addEntry(uint16_t, RegisterEntry*)	1
+core_utils_registermap.h:68:15:virtual bool RegisterMap::hasEntry(uint16_t)	1
+core_utils_registermap.h:71:18:virtual uint8_t RegisterMap::read(uint16_t, uint8_t*)	1
+core_utils_registermap.h:74:18:virtual uint8_t RegisterMap::getSize(uint16_t)	1
+core_utils_registermap.h:81:18:virtual uint8_t RegisterMap::execute(uint16_t, uint8_t*, uint8_t*)	1
+core_utils_registermap.h:85:18:virtual uint8_t RegisterMap::execute(uint16_t)	1
+core_utils_registermap.h:23:7:RegisterEntry::RegisterEntry()	1
+core_utils_registermap.h:557:2:core_utils_RegisterFunction<void, void>::core_utils_RegisterFunction()	1
+core_utils_Callback.h:14:7:constexpr Callback::Callback(Callback&&)	1
+core_utils_Callback.h:14:7:constexpr Callback& Callback::operator=(const Callback&)	1
+core_utils_Callback.h:67:7:constexpr core_utils_Callback<void, void>& core_utils_Callback<void, void>::operator=(const core_utils_Callback<void, void>&)	1
+core_utils_registermap.h:577:7:void core_utils_RegisterFunction<void, void>::set(uint16_t, RegisterMap*, core_utils_Callback<void, void>)	1
+core_utils_registermap.h:586:7:virtual void core_utils_RegisterFunction<void, void>::execute()	2
+core_utils_registermap.h:600:10:virtual uint8_t core_utils_RegisterFunction<void, void>::execute(uint8_t*, uint8_t*)	1
+core_utils_registermap.h:605:10:virtual uint8_t core_utils_RegisterFunction<void, void>::getSize()	1
+core_utils_registermap.h:609:10:virtual uint8_t core_utils_RegisterFunction<void, void>::getInputSize()	1
+core_utils_registermap.h:614:10:virtual uint8_t core_utils_RegisterFunction<void, void>::getOutputSize()	1
+core_utils_registermap.h:619:22:virtual register_entry_type core_utils_RegisterFunction<void, void>::getType()	1
+core_utils_registermap.h:623:22:virtual register_entry_rw_t core_utils_RegisterFunction<void, void>::getReadWriteSetting()	1
+twipr_control.cpp:24:6:void twipr_control_task(void*)	1
+twipr_control.h:95:16:twipr_control_reg_entries_t::twipr_control_reg_entries_t()	1
+twipr_control.h:78:16:twipr_control_callbacks_t::twipr_control_callbacks_t()	1
+twipr_control.cpp:30:1:TWIPR_ControlManager::TWIPR_ControlManager()	1
+twipr_control.cpp:35:6:void TWIPR_ControlManager::init(twipr_control_config_t)	1
+twipr_control.cpp:95:9:uint8_t TWIPR_ControlManager::start()	1
+twipr_control.cpp:102:6:void TWIPR_ControlManager::task_function()	1
+twipr_control.cpp:118:6:void TWIPR_ControlManager::stop()	1
+twipr_control.cpp:136:6:void TWIPR_ControlManager::reset()	1
+twipr_control.cpp:141:6:void TWIPR_ControlManager::newTrajectoryReceived_callback(uint16_t)	2
+twipr_control.cpp:154:6:void TWIPR_ControlManager::step()	12
+twipr_control.cpp:212:9:uint8_t TWIPR_ControlManager::setMode(twipr_control_mode_t)	11
+twipr_control.cpp:267:6:void TWIPR_ControlManager::setInput(twipr_control_input_t)	4
+twipr_control.cpp:281:24:twipr_control_status_t TWIPR_ControlManager::getStatus()	1
+twipr_control.cpp:286:9:uint8_t TWIPR_ControlManager::setBalancingGain(float*)	3
+twipr_control.cpp:300:9:uint8_t TWIPR_ControlManager::startTrajectory(twipr_control_trajectory_t)	3
+twipr_control.cpp:322:9:uint8_t TWIPR_ControlManager::stopTrajectory()	3
+twipr_control.cpp:340:6:void TWIPR_ControlManager::_step_off()	1
+twipr_control.cpp:348:6:void TWIPR_ControlManager::_step_direct()	1
+twipr_control.cpp:355:6:void TWIPR_ControlManager::_step_idle()	1
+twipr_control.cpp:364:6:void TWIPR_ControlManager::_step_error()	1
+twipr_control.cpp:373:6:void TWIPR_ControlManager::_step_balancing()	1
+twipr_control.cpp:409:6:void TWIPR_ControlManager::_step_trajectory()	1
+twipr_control.cpp:443:6:void TWIPR_ControlManager::_setTorque(twipr_control_output_t)	1
+core_utils_Callback.h:32:7:constexpr core_utils_Callback<void, short unsigned int>& core_utils_Callback<void, short unsigned int>::operator=(const core_utils_Callback<void, short unsigned int>&)	1
+twipr_control.cpp:452:6:void TWIPR_ControlManager::registerCallback(twipr_control_callback_id_t, core_utils_Callback<void, short unsigned int>)	5
+core_utils_Callback.h:32:7:constexpr core_utils_Callback<void, long unsigned int>& core_utils_Callback<void, long unsigned int>::operator=(const core_utils_Callback<void, long unsigned int>&)	1
+twipr_control.cpp:475:6:void TWIPR_ControlManager::registerCallback(twipr_control_callback_id_t, core_utils_Callback<void, long unsigned int>)	5
+twipr_control.cpp:498:6:void TWIPR_ControlManager::_trajectoryFinished()	2
+twipr_control.cpp:512:25:twipr_logging_control_t TWIPR_ControlManager::getSample()	2
+core_utils_Callback.h:69:2:core_utils_Callback<R, void>::core_utils_Callback() [with R = void]	1
+core_utils_Callback.h:83:4:R core_utils_Callback<R, void>::call() [with R = void]	1
+core_utils_registermap.h:59:7:RegisterMap::RegisterMap()	1
+core_utils_registermap.h:97:2:core_utils_RegisterMap<size>::core_utils_RegisterMap(uint16_t) [with int size = 20]	1
+core_utils_registermap.h:392:2:core_utils_RegisterFunction<void, input_t>::core_utils_RegisterFunction() [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:177:2:core_utils_RegisterEntry<T>::core_utils_RegisterEntry() [with T = twipr_control_status_t]	1
+core_utils_registermap.h:177:2:core_utils_RegisterEntry<T>::core_utils_RegisterEntry() [with T = twipr_control_mode_t]	1
+core_utils_registermap.h:299:2:core_utils_RegisterFunction<output_t, input_t>::core_utils_RegisterFunction() [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_registermap.h:299:2:core_utils_RegisterFunction<output_t, input_t>::core_utils_RegisterFunction() [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_registermap.h:299:2:core_utils_RegisterFunction<output_t, input_t>::core_utils_RegisterFunction() [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_registermap.h:177:2:core_utils_RegisterEntry<T>::core_utils_RegisterEntry() [with T = twipr_control_config_t]	1
+core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = void; A = short unsigned int]	1
+core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = void; A = long unsigned int]	1
+core_utils_Callback.h:43:2:core_utils_Callback<R, A>::core_utils_Callback(T*, R (T::*)(A)) [with T = TWIPR_ControlManager; R = void; A = twipr_control_input_t]	1
+core_utils_Callback.h:32:7:constexpr core_utils_Callback<void, twipr_control_input_t>& core_utils_Callback<void, twipr_control_input_t>::operator=(const core_utils_Callback<void, twipr_control_input_t>&)	1
+core_utils_registermap.h:411:7:void core_utils_RegisterFunction<void, input_t>::set(uint16_t, RegisterMap*, core_utils_Callback<void, input_t>) [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:203:7:void core_utils_RegisterEntry<T>::set(uint16_t, RegisterMap*, T*, register_entry_rw_t) [with T = twipr_control_status_t]	1
+core_utils_Callback.h:43:2:core_utils_Callback<R, A>::core_utils_Callback(T*, R (T::*)(A)) [with T = TWIPR_ControlManager; R = unsigned char; A = twipr_control_mode_t]	1
+core_utils_Callback.h:32:7:constexpr core_utils_Callback<unsigned char, twipr_control_mode_t>& core_utils_Callback<unsigned char, twipr_control_mode_t>::operator=(const core_utils_Callback<unsigned char, twipr_control_mode_t>&)	1
+core_utils_registermap.h:319:7:void core_utils_RegisterFunction<output_t, input_t>::set(uint16_t, RegisterMap*, core_utils_Callback<output_t, input_t>) [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_Callback.h:43:2:core_utils_Callback<R, A>::core_utils_Callback(T*, R (T::*)(A)) [with T = TWIPR_ControlManager; R = unsigned char; A = twipr_control_trajectory_t]	1
+core_utils_Callback.h:32:7:constexpr core_utils_Callback<unsigned char, twipr_control_trajectory_t>& core_utils_Callback<unsigned char, twipr_control_trajectory_t>::operator=(const core_utils_Callback<unsigned char, twipr_control_trajectory_t>&)	1
+core_utils_registermap.h:319:7:void core_utils_RegisterFunction<output_t, input_t>::set(uint16_t, RegisterMap*, core_utils_Callback<output_t, input_t>) [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_Callback.h:78:2:core_utils_Callback<R, void>::core_utils_Callback(T*, R (T::*)()) [with T = TWIPR_ControlManager; R = void]	1
+core_utils_registermap.h:203:7:void core_utils_RegisterEntry<T>::set(uint16_t, RegisterMap*, T*, register_entry_rw_t) [with T = twipr_control_config_t]	1
+core_utils_Callback.h:43:2:core_utils_Callback<R, A>::core_utils_Callback(T*, R (T::*)(A)) [with T = TWIPR_ControlManager; R = unsigned char; A = float [8]]	1
+core_utils_Callback.h:32:7:constexpr core_utils_Callback<unsigned char, float [8]>& core_utils_Callback<unsigned char, float [8]>::operator=(const core_utils_Callback<unsigned char, float [8]>&)	1
+core_utils_registermap.h:319:7:void core_utils_RegisterFunction<output_t, input_t>::set(uint16_t, RegisterMap*, core_utils_Callback<output_t, input_t>) [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = void; A = long unsigned int]	1
+core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = void; A = short unsigned int]	1
+core_utils_functionpointer.h:118:2:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:171:7:R core_utils_FunctionPointer<R, void>::operator()() [with R = void]	1
+core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = void; A = twipr_control_input_t]	1
+core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = unsigned char; A = twipr_control_mode_t]	1
+core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = unsigned char; A = twipr_control_trajectory_t]	1
+core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = unsigned char; A = float [8]]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = void; A1 = twipr_control_input_t]	1
+core_utils_functionpointer.h:43:5:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = void; A1 = twipr_control_input_t]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = unsigned char; A1 = twipr_control_mode_t]	1
+core_utils_functionpointer.h:43:5:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = unsigned char; A1 = twipr_control_mode_t]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = unsigned char; A1 = twipr_control_trajectory_t]	1
+core_utils_functionpointer.h:43:5:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = unsigned char; A1 = twipr_control_trajectory_t]	1
+core_utils_functionpointer.h:128:5:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(T*, R (T::*)()) [with T = TWIPR_ControlManager; R = void]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = unsigned char; A1 = float [8]]	1
+core_utils_functionpointer.h:43:5:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = unsigned char; A1 = float [8]]	1
+core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:136:10:void core_utils_FunctionPointer<R, void>::attach(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:155:7:R core_utils_FunctionPointer<R, void>::call() [with R = void]	5
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = void; A1 = twipr_control_input_t]	1
+core_utils_functionpointer.h:62:10:void core_utils_FunctionPointer<R, A1>::attach(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = void; A1 = twipr_control_input_t]	1
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = unsigned char; A1 = twipr_control_mode_t]	1
+core_utils_functionpointer.h:62:10:void core_utils_FunctionPointer<R, A1>::attach(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = unsigned char; A1 = twipr_control_mode_t]	1
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = unsigned char; A1 = twipr_control_trajectory_t]	1
+core_utils_functionpointer.h:62:10:void core_utils_FunctionPointer<R, A1>::attach(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = unsigned char; A1 = twipr_control_trajectory_t]	1
+core_utils_functionpointer.h:147:10:void core_utils_FunctionPointer<R, void>::attach(T*, R (T::*)()) [with T = TWIPR_ControlManager; R = void]	1
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = unsigned char; A1 = float [8]]	1
+core_utils_functionpointer.h:62:10:void core_utils_FunctionPointer<R, A1>::attach(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = unsigned char; A1 = float [8]]	1
+core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = void; A1 = long unsigned int]	5
+core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = void; A1 = short unsigned int]	5
+core_utils_functionpointer.h:95:14:static R core_utils_FunctionPointer<R, A1>::membercaller(void*, uintptr_t*, A1) [with T = TWIPR_ControlManager; R = void; A1 = twipr_control_input_t]	2
+core_utils_functionpointer.h:95:14:static R core_utils_FunctionPointer<R, A1>::membercaller(void*, uintptr_t*, A1) [with T = TWIPR_ControlManager; R = unsigned char; A1 = twipr_control_mode_t]	2
+core_utils_functionpointer.h:95:14:static R core_utils_FunctionPointer<R, A1>::membercaller(void*, uintptr_t*, A1) [with T = TWIPR_ControlManager; R = unsigned char; A1 = twipr_control_trajectory_t]	2
+core_utils_functionpointer.h:181:14:static R core_utils_FunctionPointer<R, void>::membercaller(void*, uintptr_t*) [with T = TWIPR_ControlManager; R = void]	2
+core_utils_functionpointer.h:95:14:static R core_utils_FunctionPointer<R, A1>::membercaller(void*, uintptr_t*, A1) [with T = TWIPR_ControlManager; R = unsigned char; A1 = float [8]]	2
+core_utils_registermap.h:101:7:void core_utils_RegisterMap<size>::write(uint16_t, void*) [with int size = 20]	4
+core_utils_registermap.h:108:7:void core_utils_RegisterMap<size>::write(uint16_t, uint8_t*) [with int size = 20]	4
+core_utils_registermap.h:144:7:void core_utils_RegisterMap<size>::addEntry(uint16_t, RegisterEntry*) [with int size = 20]	1
+core_utils_registermap.h:148:7:bool core_utils_RegisterMap<size>::hasEntry(uint16_t) [with int size = 20]	2
+core_utils_registermap.h:115:10:uint8_t core_utils_RegisterMap<size>::read(uint16_t, uint8_t*) [with int size = 20]	4
+core_utils_registermap.h:156:10:uint8_t core_utils_RegisterMap<size>::getSize(uint16_t) [with int size = 20]	1
+core_utils_registermap.h:161:22:register_entry_type core_utils_RegisterMap<size>::getType(uint16_t) [with int size = 20]	1
+core_utils_registermap.h:164:22:register_entry_rw_t core_utils_RegisterMap<size>::getReadWriteSetting(uint16_t) [with int size = 20]	1
+core_utils_registermap.h:123:10:uint8_t core_utils_RegisterMap<size>::execute(uint16_t, uint8_t*, uint8_t*) [with int size = 20]	4
+core_utils_registermap.h:132:10:uint8_t core_utils_RegisterMap<size>::execute(uint16_t) [with int size = 20]	7
+core_utils_registermap.h:228:7:void core_utils_RegisterEntry<T>::write(void*) [with T = twipr_control_config_t]	2
+core_utils_registermap.h:238:7:void core_utils_RegisterEntry<T>::write(uint8_t*) [with T = twipr_control_config_t]	3
+core_utils_registermap.h:248:10:uint8_t core_utils_RegisterEntry<T>::readBytes(uint8_t*) [with T = twipr_control_config_t]	3
+core_utils_registermap.h:268:10:uint8_t core_utils_RegisterEntry<T>::getSize() [with T = twipr_control_config_t]	1
+core_utils_registermap.h:272:22:register_entry_type core_utils_RegisterEntry<T>::getType() [with T = twipr_control_config_t]	1
+core_utils_registermap.h:275:22:register_entry_rw_t core_utils_RegisterEntry<T>::getReadWriteSetting() [with T = twipr_control_config_t]	1
+core_utils_registermap.h:355:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getSize() [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_registermap.h:360:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getInputSize() [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_registermap.h:365:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getOutputSize() [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_registermap.h:342:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::execute(uint8_t*, uint8_t*) [with output_t = unsigned char; input_t = float [8]]	3
+core_utils_registermap.h:369:22:register_entry_type core_utils_RegisterFunction<output_t, input_t>::getType() [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_registermap.h:373:22:register_entry_rw_t core_utils_RegisterFunction<output_t, input_t>::getReadWriteSetting() [with output_t = unsigned char; input_t = float [8]]	1
+core_utils_registermap.h:355:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getSize() [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_registermap.h:360:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getInputSize() [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_registermap.h:365:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getOutputSize() [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_registermap.h:342:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::execute(uint8_t*, uint8_t*) [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	3
+core_utils_registermap.h:369:22:register_entry_type core_utils_RegisterFunction<output_t, input_t>::getType() [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_registermap.h:373:22:register_entry_rw_t core_utils_RegisterFunction<output_t, input_t>::getReadWriteSetting() [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	1
+core_utils_registermap.h:355:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getSize() [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_registermap.h:360:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getInputSize() [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_registermap.h:365:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::getOutputSize() [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_registermap.h:342:10:uint8_t core_utils_RegisterFunction<output_t, input_t>::execute(uint8_t*, uint8_t*) [with output_t = unsigned char; input_t = twipr_control_mode_t]	3
+core_utils_registermap.h:369:22:register_entry_type core_utils_RegisterFunction<output_t, input_t>::getType() [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_registermap.h:373:22:register_entry_rw_t core_utils_RegisterFunction<output_t, input_t>::getReadWriteSetting() [with output_t = unsigned char; input_t = twipr_control_mode_t]	1
+core_utils_registermap.h:228:7:void core_utils_RegisterEntry<T>::write(void*) [with T = twipr_control_mode_t]	2
+core_utils_registermap.h:238:7:void core_utils_RegisterEntry<T>::write(uint8_t*) [with T = twipr_control_mode_t]	3
+core_utils_registermap.h:248:10:uint8_t core_utils_RegisterEntry<T>::readBytes(uint8_t*) [with T = twipr_control_mode_t]	3
+core_utils_registermap.h:268:10:uint8_t core_utils_RegisterEntry<T>::getSize() [with T = twipr_control_mode_t]	1
+core_utils_registermap.h:272:22:register_entry_type core_utils_RegisterEntry<T>::getType() [with T = twipr_control_mode_t]	1
+core_utils_registermap.h:275:22:register_entry_rw_t core_utils_RegisterEntry<T>::getReadWriteSetting() [with T = twipr_control_mode_t]	1
+core_utils_registermap.h:228:7:void core_utils_RegisterEntry<T>::write(void*) [with T = twipr_control_status_t]	2
+core_utils_registermap.h:238:7:void core_utils_RegisterEntry<T>::write(uint8_t*) [with T = twipr_control_status_t]	3
+core_utils_registermap.h:248:10:uint8_t core_utils_RegisterEntry<T>::readBytes(uint8_t*) [with T = twipr_control_status_t]	3
+core_utils_registermap.h:268:10:uint8_t core_utils_RegisterEntry<T>::getSize() [with T = twipr_control_status_t]	1
+core_utils_registermap.h:272:22:register_entry_type core_utils_RegisterEntry<T>::getType() [with T = twipr_control_status_t]	1
+core_utils_registermap.h:275:22:register_entry_rw_t core_utils_RegisterEntry<T>::getReadWriteSetting() [with T = twipr_control_status_t]	1
+core_utils_registermap.h:442:10:uint8_t core_utils_RegisterFunction<void, input_t>::getSize() [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:446:10:uint8_t core_utils_RegisterFunction<void, input_t>::getInputSize() [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:451:10:uint8_t core_utils_RegisterFunction<void, input_t>::getOutputSize() [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:434:10:uint8_t core_utils_RegisterFunction<void, input_t>::execute(uint8_t*, uint8_t*) [with input_t = twipr_control_input_t]	2
+core_utils_registermap.h:455:22:register_entry_type core_utils_RegisterFunction<void, input_t>::getType() [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:459:22:register_entry_rw_t core_utils_RegisterFunction<void, input_t>::getReadWriteSetting() [with input_t = twipr_control_input_t]	1
+core_utils_registermap.h:220:7:void core_utils_RegisterEntry<T>::write(T) [with T = twipr_control_config_t]	2
+core_utils_registermap.h:335:11:output_t core_utils_RegisterFunction<output_t, input_t>::execute(input_t) [with output_t = unsigned char; input_t = float [8]]	2
+core_utils_registermap.h:335:11:output_t core_utils_RegisterFunction<output_t, input_t>::execute(input_t) [with output_t = unsigned char; input_t = twipr_control_trajectory_t]	2
+core_utils_registermap.h:335:11:output_t core_utils_RegisterFunction<output_t, input_t>::execute(input_t) [with output_t = unsigned char; input_t = twipr_control_mode_t]	2
+core_utils_registermap.h:220:7:void core_utils_RegisterEntry<T>::write(T) [with T = twipr_control_mode_t]	2
+core_utils_registermap.h:220:7:void core_utils_RegisterEntry<T>::write(T) [with T = twipr_control_status_t]	2
+core_utils_registermap.h:427:7:void core_utils_RegisterFunction<void, input_t>::execute(input_t) [with input_t = twipr_control_input_t]	2
+core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = unsigned char; A = float [8]]	1
+core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = unsigned char; A = twipr_control_trajectory_t]	1
+core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = unsigned char; A = twipr_control_mode_t]	1
+core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = void; A = twipr_control_input_t]	1
+core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = unsigned char; A1 = float [8]]	1
+core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = unsigned char; A1 = twipr_control_trajectory_t]	1
+core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = unsigned char; A1 = twipr_control_mode_t]	1
+core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = void; A1 = twipr_control_input_t]	1
+core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = unsigned char; A1 = float [8]]	5
+core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = unsigned char; A1 = twipr_control_trajectory_t]	5
+core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = unsigned char; A1 = twipr_control_mode_t]	5
+core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = void; A1 = twipr_control_input_t]	5

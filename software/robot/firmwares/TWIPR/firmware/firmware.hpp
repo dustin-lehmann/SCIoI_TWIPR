@@ -60,7 +60,6 @@ public:
 private:
 
 	TWIPR_Drive _drive;
-	TWIPR_Sensors _sensors;
 	TWIPR_CommunicationManager _comm;
 	TWIPR_ControlManager _control;
 	TWIPR_Estimation _estimation;

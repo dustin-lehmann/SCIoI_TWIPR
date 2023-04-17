@@ -1,0 +1,32 @@
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:16:2:Callback::Callback()	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:20:15:virtual void Callback::call()	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:24:15:virtual void Callback::call(void*)	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:14:7:constexpr Callback& Callback::operator=(const Callback&)	16	static
+../firmware/communication/modules/twipr_spi_communication.h:34:16:twipr_spi_comm_callbacks_t::twipr_spi_comm_callbacks_t()	16	static
+../firmware/communication/modules/twipr_spi_communication.cpp:12:1:TWIPR_SPI_Communication::TWIPR_SPI_Communication()	16	static
+../firmware/communication/modules/twipr_spi_communication.cpp:17:6:void TWIPR_SPI_Communication::init(twipr_spi_comm_config_t)	120	static
+../firmware/communication/modules/twipr_spi_communication.cpp:44:6:void TWIPR_SPI_Communication::start()	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:32:7:constexpr core_utils_Callback<void, short unsigned int>& core_utils_Callback<void, short unsigned int>::operator=(const core_utils_Callback<void, short unsigned int>&)	24	static
+../firmware/communication/modules/twipr_spi_communication.cpp:49:6:void TWIPR_SPI_Communication::registerCallback(twipr_spi_comm_callback_id_t, core_utils_Callback<void, short unsigned int>)	24	static
+../firmware/communication/modules/twipr_spi_communication.cpp:72:6:void TWIPR_SPI_Communication::receiveTrajectory()	16	static
+../firmware/communication/modules/twipr_spi_communication.cpp:76:6:void TWIPR_SPI_Communication::provideSampleData()	16	static
+../firmware/communication/modules/twipr_spi_communication.cpp:81:6:void TWIPR_SPI_Communication::receiveTrajectory(twipr_control_trajectory_input_t*, uint16_t)	24	static
+../firmware/communication/modules/twipr_spi_communication.cpp:87:6:void TWIPR_SPI_Communication::provideSampleData(twipr_logging_sample_t*, uint16_t)	24	static
+../firmware/communication/modules/twipr_spi_communication.cpp:94:6:void TWIPR_SPI_Communication::rx_cmplt_function()	16	static
+../firmware/communication/modules/twipr_spi_communication.cpp:100:6:void TWIPR_SPI_Communication::tx_cmplt_function()	16	static
+../firmware/communication/modules/twipr_spi_communication.cpp:109:6:void TWIPR_SPI_Communication::stopTransmission()	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:83:4:R core_utils_Callback<R, void>::call() [with R = void]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:34:2:core_utils_Callback<R, A>::core_utils_Callback() [with R = void; A = short unsigned int]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:78:2:core_utils_Callback<R, void>::core_utils_Callback(T*, R (T::*)()) [with T = TWIPR_SPI_Communication; R = void]	56	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_Callback.h:48:4:R core_utils_Callback<R, A>::call(A) [with R = void; A = short unsigned int]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:118:2:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(R (*)()) [with R = void]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:171:7:R core_utils_FunctionPointer<R, void>::operator()() [with R = void]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = void; A1 = short unsigned int]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:128:5:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(T*, R (T::*)()) [with T = TWIPR_SPI_Communication; R = void]	24	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:86:7:R core_utils_FunctionPointer<R, A1>::operator()(A1) [with R = void; A1 = short unsigned int]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:136:10:void core_utils_FunctionPointer<R, void>::attach(R (*)()) [with R = void]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:155:7:R core_utils_FunctionPointer<R, void>::call() [with R = void]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = void; A1 = short unsigned int]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:147:10:void core_utils_FunctionPointer<R, void>::attach(T*, R (T::*)()) [with T = TWIPR_SPI_Communication; R = void]	24	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:70:7:R core_utils_FunctionPointer<R, A1>::call(A1) [with R = void; A1 = short unsigned int]	16	static
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils_functionpointer.h:181:14:static R core_utils_FunctionPointer<R, void>::membercaller(void*, uintptr_t*) [with T = TWIPR_SPI_Communication; R = void]	24	static

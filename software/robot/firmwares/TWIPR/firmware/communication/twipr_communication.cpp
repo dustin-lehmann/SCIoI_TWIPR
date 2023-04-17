@@ -67,6 +67,11 @@ void TWIPR_CommunicationManager::registerCallback(twipr_communication_callback_i
 }
 
 /* ====================================================================== */
+void TWIPR_CommunicationManager::resetUART(){
+	this->uart_interface.reset();
+}
+
+/* ====================================================================== */
 void TWIPR_CommunicationManager::_uart_handleMsg_write_callback(
 		core_comm_SerialMessage *msg) {
 
@@ -235,15 +240,31 @@ void TWIPR_CommunicationManager::_spi_rxTrajectory_callback(uint16_t len) {
 	if (this->_callbacks.new_trajectory.registered){
 		this->_callbacks.new_trajectory.call(len);
 	}
+	this->spi_interface.provideSampleData();
 }
 /* ====================================================================== */
 void TWIPR_CommunicationManager::sampleBufferFull(){
+	this->spi_interface.stopTransmission();
+	this->spi_interface.provideSampleData();
+	this->config.notification_gpio_tx.write(0);
 	// Notify the CM4 that the sample buffer is full by writing a HIGH to the communication pin
-	this->config.notification_gpio.write(1);
+	this->config.notification_gpio_tx.write(1);
 
 }
 /* ====================================================================== */
 void TWIPR_CommunicationManager::_spi_txSamples_callback(uint16_t len) {
-	this->config.notification_gpio.write(0);
+	this->config.notification_gpio_tx.write(0);
 }
 
+
+/* ====================================================================== */
+void TWIPR_CommunicationManager::spi_pin_callback() {
+	GPIO_PinState pin_state = HAL_GPIO_ReadPin(SPI_PIN_GPIOx, SPI_PIN_PIN);
+
+	if (pin_state == GPIO_PIN_SET){ // Trajectory Mode
+		this->spi_interface.stopTransmission();
+		this->spi_interface.receiveTrajectory();
+	} else { // Sample Mode
+		nop();
+	}
+}

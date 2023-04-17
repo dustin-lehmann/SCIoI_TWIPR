@@ -7,6 +7,10 @@
 
 #include "twipr_estimation.h"
 
+static const osThreadAttr_t estimation_task_attributes = { .name = "estimation",
+		.stack_size = 1280 * 4, .priority = (osPriority_t) osPriorityNormal, };
+
+/* ======================================================= */
 TWIPR_Estimation::TWIPR_Estimation() {
 	this->status = TWIPR_ESTIMATION_STATUS_NONE;
 }
@@ -14,15 +18,18 @@ TWIPR_Estimation::TWIPR_Estimation() {
 /* ======================================================= */
 void TWIPR_Estimation::init(twipr_estimation_config_t config) {
 	this->config = config;
+
+	// Initialize the sensors
+	twipr_sensors_config_t twipr_sensors_config = { .drive = this->config.drive, };
+	this->_sensors.init(twipr_sensors_config);
+
 	this->status = TWIPR_ESTIMATION_STATUS_IDLE;
 	this->_semaphore = osSemaphoreNew(1, 1, NULL);
 }
 
 /* ======================================================= */
 void TWIPR_Estimation::start() {
-
-	this->_orientation_fusion.begin((float) TWIPR_ESTIMATION_FREQUENCY);
-	this->status = TWIPR_ESTIMATION_STATUS_OK;
+	osThreadNew(estimation_task, (void*) this, &estimation_task_attributes);
 }
 /* ======================================================= */
 void TWIPR_Estimation::reset() {
@@ -30,12 +37,16 @@ void TWIPR_Estimation::reset() {
 }
 /* ======================================================= */
 void TWIPR_Estimation::task_function() {
+
+	this->_orientation_fusion.begin((float) TWIPR_ESTIMATION_FREQUENCY);
+	this->status = TWIPR_ESTIMATION_STATUS_OK;
+//	this->_sensors.calibrate();
 	uint32_t ticks;
 
 	while (true) {
 		ticks = osKernelGetTickCount();
 		this->update();
-		osDelayUntil(ticks + (uint32_t) 1000.0 / TWIPR_ESTIMATION_FREQUENCY);
+		osDelayUntil(ticks + (uint32_t) (1000.0 / TWIPR_ESTIMATION_FREQUENCY));
 	}
 }
 /* ======================================================= */
@@ -46,23 +57,23 @@ void TWIPR_Estimation::stop() {
 void TWIPR_Estimation::update() {
 
 	// Update the Sensors
-	this->_sensors->update();
+	this->_sensors.update();
 
 	// Read the sensor data
-	twipr_sensors_data_t data = this->_sensors->getData();
+	twipr_sensors_data_t data = this->_sensors.getData();
 
 	// Orientation Estimation
 	this->_orientation_fusion.updateIMU(data.gyr.x, data.gyr.y, data.gyr.z,
 			data.acc.x, data.acc.y, data.acc.z);
 
 	// Read the pitch angle
-	float theta = this->_orientation_fusion.getPitchRadians();
-	float theta_dot = data.gyr.y;
+	float theta = this->_orientation_fusion.getRollRadians();
+	float theta_dot = data.gyr.x;
 
 	// Get the speed and yaw speed
-	float v = (data.speed_left + data.speed_right) / 2 * this->model->r_wheel;
-	float psi_dot = (data.speed_right - data.speed_left) * this->model->r_wheel
-			/ this->model->distance_wheels;
+	float v = (data.speed_left + data.speed_right) / 2 * this->config.model.r_wheel;
+	float psi_dot = (data.speed_right - data.speed_left) * this->config.model.r_wheel
+			/ this->config.model.distance_wheels;
 
 	// Set the current state
 	osSemaphoreAcquire(_semaphore, portMAX_DELAY);
@@ -129,6 +140,7 @@ void TWIPR_Estimation::setState(twipr_estimation_state_t state) {
 twipr_logging_estimation_t TWIPR_Estimation::getSample(){
 	twipr_logging_estimation_t sample;
 	sample.state = this->getState();
+	sample.data = this->_sensors.getData();
 	return sample;
 }
 /* ======================================================= */

@@ -22,6 +22,7 @@ class UART_CMD(enum.IntEnum):
     UART_CMD_FCT = 0x07
     UART_CMD_ECHO = 0x08
 
+
 FLOAT = ctypes.c_float
 DOUBLE = ctypes.c_double
 UINT8 = ctypes.c_uint8
@@ -32,9 +33,8 @@ UINT32 = ctypes.c_uint32
 INT32 = ctypes.c_int32
 
 
-
 class test_struct(ctypes.Structure):
-    _fields_ = [('a', ctypes.c_uint16), ('b', ctypes.c_float)]
+    _fields_ = [('a', ctypes.c_uint16), ('b', ctypes.c_float), ("c", ctypes.c_wchar_p)]
 
 
 @dataclasses.dataclass
@@ -45,7 +45,6 @@ class ReadRequest:
     msg: UART_Message = None
     timeout: bool = True
     flag: int = 0
-
 
     def __init__(self):
         self.event = threading.Event()
@@ -125,10 +124,24 @@ class TWIPR_Communication_STM32:
             return None
 
     # ------------------------------------------------------------------------------------------------------------------
-    def function(self, address, module: int = 0, data = None, input_type=None, output_type=None, timeout=1):
-        if input_type is not None:
+    def function(self, address, module: int = 0, data=None, input_type=None, output_type=None, timeout=1):
+
+        if isinstance(data, list) and input_type is not None:
+
+            data_bytes = bytearray()
+            for entry in data:
+                data_bytes += bytes(input_type(entry))
+
+            data = bytes(data_bytes)
+
+        elif input_type is not None and not isinstance(data, input_type):
             data = input_type(data)
             data = bytes(data)
+
+        elif input_type is not None and isinstance(data, input_type):
+            data = bytes(data)
+        else:
+            raise Exception()
 
         self._send(cmd=UART_CMD.UART_CMD_FCT, module=module, address=address, flag=0, data=data)
 
@@ -148,7 +161,6 @@ class TWIPR_Communication_STM32:
                 return None
         else:
             return None
-
 
     # ------------------------------------------------------------------------------------------------------------------
     def registerCallback(self, type, callback):
@@ -199,7 +211,6 @@ class TWIPR_Communication_STM32:
             if req.module == msg.add[0] and req.address == bytes([msg.add[1], msg.add[2]]):
                 req.msg = msg
                 req.event.set()
-
 
     # ------------------------------------------------------------------------------------------------------------------
     def _registerRead(self, module, address):

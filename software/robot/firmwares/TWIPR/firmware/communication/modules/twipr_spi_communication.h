@@ -48,7 +48,12 @@ public:
 	void registerCallback(twipr_spi_comm_callback_id_t callback_id,
 			core_utils_Callback<void, uint16_t> callback);
 
-	void listenForCommand();
+
+	void stopTransmission();
+
+	void receiveTrajectory();
+	void provideSampleData();
+
 
 	void receiveTrajectory(uint16_t len);
 	void receiveTrajectory(twipr_control_trajectory_input_t *trajectory_buffer,

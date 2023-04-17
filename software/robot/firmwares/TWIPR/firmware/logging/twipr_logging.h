@@ -21,7 +21,6 @@ typedef struct twipr_logging_sample_t {
 	twipr_logging_general_t general;
 	twipr_logging_control_t control;
 	twipr_logging_estimation_t estimation;
-	twipr_logging_sensors_t sensors;
 } twipr_logging_sample_t;
 
 typedef struct twipr_logging_sample_small {

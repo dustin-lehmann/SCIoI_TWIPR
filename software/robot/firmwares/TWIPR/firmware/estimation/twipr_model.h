@@ -8,7 +8,7 @@
 #ifndef ESTIMATION_TWIPR_MODEL_H_
 #define ESTIMATION_TWIPR_MODEL_H_
 
-typedef struct twipr_model {
+typedef struct twipr_model_t {
 	float m;
 	float r_wheel;
 	float distance_wheels;

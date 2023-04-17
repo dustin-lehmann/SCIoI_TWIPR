@@ -1,5 +1,5 @@
 import typing
-
+import cm4_core.utils as utils
 import cm4_core.communication.protocol as protocol
 
 
@@ -15,15 +15,16 @@ class UART_Protocol(protocol.Protocol):
     """
        |   BYTE    |   NAME            |   DESCRIPTION                 |   VALUE
        |   0       |   HEADER[0]       |   Header byte                 |   0x55
-       |   3       |   CMD             |   Command                     |
-       |   1       |   ADD[0]          |   Address                     |
-       |   2       |   ADD[1]          |   Address                     |
-       |   2       |   ADD[2]          |   Address                     |
-       |   3       |   FLAG            |   Flag                        |
-       |   5       |   LEN             |   Length of the payload       |
-       |   6       |   PAYLOAD[0]      |   Payload                     |
-       |   6+N-1   |   PAYLOAD[N-1]    |   Payload                     |
-       |   6+N     |   CRC8            |   CRC8 of the Payload         |
+       |   1       |   CMD             |   Command                     |
+       |   2       |   ADD[0]          |   Address                     |
+       |   3       |   ADD[1]          |   Address                     |
+       |   4       |   ADD[2]          |   Address                     |
+       |   5       |   FLAG            |   Flag                        |
+       |   6       |   LEN[0]             |   Length of the payload       |
+       |   7       |   LEN[1]             |   Length of the payload       |
+       |   8       |   PAYLOAD[0]      |   Payload                     |
+       |   8+N-1   |   PAYLOAD[N-1]    |   Payload                     |
+       |   8+N     |   CRC8            |   CRC8 of the Payload         |
        """
     base_protocol = None
     protocol_identifier = 0
@@ -37,10 +38,10 @@ class UART_Protocol(protocol.Protocol):
     idx_add_2 = 4
     idx_flag = 5
     idx_len = 6
-    idx_payload = 7
-    offset_crc8 = 7
+    idx_payload = 8
+    offset_crc8 = 8
 
-    protocol_overhead = 8
+    protocol_overhead = 9
 
     @classmethod
     def decode(cls, data):
@@ -51,8 +52,7 @@ class UART_Protocol(protocol.Protocol):
         """
         msg = cls.Message()
 
-        payload_len = data[cls.idx_len]
-
+        payload_len = utils.bytes.byteArrayToInt(data[cls.idx_len:cls.idx_len+2])
         msg.cmd = data[cls.idx_cmd]
         msg.flag = data[cls.idx_flag]
         msg.add = data[cls.idx_add_0:cls.idx_add_2+1]
@@ -73,7 +73,7 @@ class UART_Protocol(protocol.Protocol):
         buffer[cls.idx_cmd] = msg.cmd
         buffer[cls.idx_add_0:cls.idx_add_2+1] = msg.add
         buffer[cls.idx_flag] = msg.flag
-        buffer[cls.idx_len] = len(msg.data)
+        buffer[cls.idx_len:cls.idx_len+2] = utils.bytes.intToByteList(len(msg.data), num_bytes=2)
         buffer[cls.idx_payload:cls.idx_payload + len(msg.data)] = msg.data
         buffer[cls.offset_crc8 + len(msg.data)] = 0
         buffer = bytes(buffer)

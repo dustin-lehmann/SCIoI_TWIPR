@@ -16,8 +16,8 @@ static core_comm_UartInterface_config_t twipr_communication_uart_cm4_interface_c
 static const osThreadAttr_t task_attributes = { .name = "twipr_uart_comm_task",
 		.stack_size = 512 * 4, .priority = (osPriority_t) osPriorityNormal };
 
-static core_comm_SerialMessage incoming_msg;
-static core_comm_SerialMessage outgoing_msg;
+static core_comm_SerialMessage_memory<128> incoming_msg;
+static core_comm_SerialMessage_memory<128> outgoing_msg;
 
 /* =========================================================================== */
 void twipr_uart_comm_task(void *argument) {
@@ -53,7 +53,10 @@ void TWIPR_UART_Communication::start() {
 	// Start the task
 	this->_thread = osThreadNew(twipr_uart_comm_task, this, &task_attributes);
 }
-
+/* =========================================================================== */
+void TWIPR_UART_Communication::reset(){
+	this->_uart_cm4.reset();
+}
 /* =========================================================================== */
 void TWIPR_UART_Communication::send(uint8_t cmd, uint8_t module,
 		uint16_t address, uint8_t flag, uint8_t *data, uint8_t len) {
@@ -119,7 +122,6 @@ void TWIPR_UART_Communication::_handleIncomingMessages() {
 	// Loop through all the messages in the rx queue
 	while (this->_uart_cm4.rx_queue.available()) {
 		this->_uart_cm4.rx_queue.read(&incoming_msg);
-		led2.toggle();
 
 		// Check if the message is correct
 		// TODO

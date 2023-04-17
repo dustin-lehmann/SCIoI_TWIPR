@@ -52,6 +52,7 @@ public:
 
 	void init(twipr_uart_comm_config_t config);
 	void start();
+	void reset();
 	void send(core_comm_SerialMessage msg);
 	void send(core_comm_SerialMessage *msg);
 	void send(uint8_t cmd, uint8_t module, uint16_t address, uint8_t flag,

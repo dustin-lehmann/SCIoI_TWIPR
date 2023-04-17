@@ -1,0 +1,87 @@
+std_abs.h:75:3:constexpr float std::abs(float)	1
+core_math.h:15:14:float deg2rad(float)	1
+core_utils_Callback.h:16:2:Callback::Callback()	1
+core_utils_Callback.h:20:15:virtual void Callback::call()	1
+core_utils_Callback.h:24:15:virtual void Callback::call(void*)	1
+core_utils_registermap.h:25:15:virtual void RegisterEntry::write(void*)	1
+core_utils_registermap.h:28:15:virtual void RegisterEntry::write(uint8_t*)	1
+core_utils_registermap.h:31:18:virtual uint8_t RegisterEntry::readBytes(uint8_t*)	1
+core_utils_registermap.h:34:18:virtual uint8_t RegisterEntry::getSize()	1
+core_utils_registermap.h:37:18:virtual uint8_t RegisterEntry::getInputSize()	1
+core_utils_registermap.h:41:18:virtual uint8_t RegisterEntry::getOutputSize()	1
+core_utils_registermap.h:45:15:virtual void RegisterEntry::execute()	1
+core_utils_registermap.h:48:18:virtual uint8_t RegisterEntry::execute(uint8_t*, uint8_t*)	1
+core_utils_registermap.h:61:15:virtual void RegisterMap::write(uint16_t, void*)	1
+core_utils_registermap.h:63:15:virtual void RegisterMap::write(uint16_t, uint8_t*)	1
+core_utils_registermap.h:65:15:virtual void RegisterMap::addEntry(uint16_t, RegisterEntry*)	1
+core_utils_registermap.h:68:15:virtual bool RegisterMap::hasEntry(uint16_t)	1
+core_utils_registermap.h:71:18:virtual uint8_t RegisterMap::read(uint16_t, uint8_t*)	1
+core_utils_registermap.h:74:18:virtual uint8_t RegisterMap::getSize(uint16_t)	1
+core_utils_registermap.h:81:18:virtual uint8_t RegisterMap::execute(uint16_t, uint8_t*, uint8_t*)	1
+core_utils_registermap.h:85:18:virtual uint8_t RegisterMap::execute(uint16_t)	1
+core_utils_registermap.h:23:7:RegisterEntry::RegisterEntry()	1
+core_utils_Callback.h:14:7:constexpr Callback::Callback(Callback&&)	1
+firmware.cpp:28:6:void firmware()	1
+firmware.cpp:34:6:void firmware_task(void*)	1
+firmware.hpp:32:16:twipr_firmware_register_entries_t::twipr_firmware_register_entries_t()	1
+firmware.cpp:41:1:TWIPR_Firmware::TWIPR_Firmware()	1
+firmware.cpp:46:6:void TWIPR_Firmware::task_function()	4
+firmware.cpp:63:6:void TWIPR_Firmware::init()	1
+firmware.cpp:139:6:void TWIPR_Firmware::start()	1
+firmware.cpp:153:6:void TWIPR_Firmware::step()	1
+firmware.cpp:173:6:void TWIPR_Firmware::_controlStep_callback(uint32_t)	2
+firmware.cpp:202:6:void TWIPR_Firmware::notifySampleBufferFull()	1
+firmware.cpp:207:6:void sample_dma_transfer_cmplt_callback(DMA_HandleTypeDef*)	1
+core_utils_Callback.h:69:2:core_utils_Callback<R, void>::core_utils_Callback() [with R = void]	1
+core_utils_Callback.h:83:4:R core_utils_Callback<R, void>::call() [with R = void]	1
+core_utils_registermap.h:59:7:RegisterMap::RegisterMap()	1
+core_utils_registermap.h:97:2:core_utils_RegisterMap<size>::core_utils_RegisterMap(uint16_t) [with int size = 60]	1
+core_utils_registermap.h:177:2:core_utils_RegisterEntry<T>::core_utils_RegisterEntry() [with T = twipr_firmware_state_t]	1
+core_utils_registermap.h:177:2:core_utils_RegisterEntry<T>::core_utils_RegisterEntry() [with T = unsigned char]	1
+core_utils_Callback.h:43:2:core_utils_Callback<R, A>::core_utils_Callback(T*, R (T::*)(A)) [with T = TWIPR_ControlManager; R = void; A = short unsigned int]	1
+core_utils_Callback.h:43:2:core_utils_Callback<R, A>::core_utils_Callback(T*, R (T::*)(A)) [with T = TWIPR_Firmware; R = void; A = long unsigned int]	1
+core_utils_registermap.h:203:7:void core_utils_RegisterEntry<T>::set(uint16_t, RegisterMap*, T*, register_entry_rw_t) [with T = unsigned char]	1
+core_utils_Callback.h:78:2:core_utils_Callback<R, void>::core_utils_Callback(T*, R (T::*)()) [with T = TWIPR_CommunicationManager; R = void]	1
+core_utils_functionpointer.h:118:2:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:171:7:R core_utils_FunctionPointer<R, void>::operator()() [with R = void]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:43:5:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:33:2:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(R (*)(A1)) [with R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:43:5:core_utils_FunctionPointer<R, A1>::core_utils_FunctionPointer(T*, R (T::*)(A1)) [with T = TWIPR_Firmware; R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:128:5:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(T*, R (T::*)()) [with T = TWIPR_CommunicationManager; R = void]	1
+core_utils_functionpointer.h:136:10:void core_utils_FunctionPointer<R, void>::attach(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:155:7:R core_utils_FunctionPointer<R, void>::call() [with R = void]	5
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:62:10:void core_utils_FunctionPointer<R, A1>::attach(T*, R (T::*)(A1)) [with T = TWIPR_ControlManager; R = void; A1 = short unsigned int]	1
+core_utils_functionpointer.h:51:10:void core_utils_FunctionPointer<R, A1>::attach(R (*)(A1)) [with R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:62:10:void core_utils_FunctionPointer<R, A1>::attach(T*, R (T::*)(A1)) [with T = TWIPR_Firmware; R = void; A1 = long unsigned int]	1
+core_utils_functionpointer.h:147:10:void core_utils_FunctionPointer<R, void>::attach(T*, R (T::*)()) [with T = TWIPR_CommunicationManager; R = void]	1
+core_utils_functionpointer.h:95:14:static R core_utils_FunctionPointer<R, A1>::membercaller(void*, uintptr_t*, A1) [with T = TWIPR_ControlManager; R = void; A1 = short unsigned int]	2
+core_utils_functionpointer.h:95:14:static R core_utils_FunctionPointer<R, A1>::membercaller(void*, uintptr_t*, A1) [with T = TWIPR_Firmware; R = void; A1 = long unsigned int]	2
+core_utils_functionpointer.h:181:14:static R core_utils_FunctionPointer<R, void>::membercaller(void*, uintptr_t*) [with T = TWIPR_CommunicationManager; R = void]	2
+firmware.cpp:211:1:void __static_initialization_and_destruction_0(int, int)	3
+core_utils_registermap.h:101:7:void core_utils_RegisterMap<size>::write(uint16_t, void*) [with int size = 60]	4
+core_utils_registermap.h:108:7:void core_utils_RegisterMap<size>::write(uint16_t, uint8_t*) [with int size = 60]	4
+core_utils_registermap.h:144:7:void core_utils_RegisterMap<size>::addEntry(uint16_t, RegisterEntry*) [with int size = 60]	1
+core_utils_registermap.h:148:7:bool core_utils_RegisterMap<size>::hasEntry(uint16_t) [with int size = 60]	2
+core_utils_registermap.h:115:10:uint8_t core_utils_RegisterMap<size>::read(uint16_t, uint8_t*) [with int size = 60]	4
+core_utils_registermap.h:156:10:uint8_t core_utils_RegisterMap<size>::getSize(uint16_t) [with int size = 60]	1
+core_utils_registermap.h:161:22:register_entry_type core_utils_RegisterMap<size>::getType(uint16_t) [with int size = 60]	1
+core_utils_registermap.h:164:22:register_entry_rw_t core_utils_RegisterMap<size>::getReadWriteSetting(uint16_t) [with int size = 60]	1
+core_utils_registermap.h:123:10:uint8_t core_utils_RegisterMap<size>::execute(uint16_t, uint8_t*, uint8_t*) [with int size = 60]	4
+core_utils_registermap.h:132:10:uint8_t core_utils_RegisterMap<size>::execute(uint16_t) [with int size = 60]	7
+core_utils_registermap.h:228:7:void core_utils_RegisterEntry<T>::write(void*) [with T = unsigned char]	2
+core_utils_registermap.h:238:7:void core_utils_RegisterEntry<T>::write(uint8_t*) [with T = unsigned char]	3
+core_utils_registermap.h:248:10:uint8_t core_utils_RegisterEntry<T>::readBytes(uint8_t*) [with T = unsigned char]	3
+core_utils_registermap.h:268:10:uint8_t core_utils_RegisterEntry<T>::getSize() [with T = unsigned char]	1
+core_utils_registermap.h:272:22:register_entry_type core_utils_RegisterEntry<T>::getType() [with T = unsigned char]	1
+core_utils_registermap.h:275:22:register_entry_rw_t core_utils_RegisterEntry<T>::getReadWriteSetting() [with T = unsigned char]	1
+core_utils_registermap.h:228:7:void core_utils_RegisterEntry<T>::write(void*) [with T = twipr_firmware_state_t]	2
+core_utils_registermap.h:238:7:void core_utils_RegisterEntry<T>::write(uint8_t*) [with T = twipr_firmware_state_t]	3
+core_utils_registermap.h:248:10:uint8_t core_utils_RegisterEntry<T>::readBytes(uint8_t*) [with T = twipr_firmware_state_t]	3
+core_utils_registermap.h:268:10:uint8_t core_utils_RegisterEntry<T>::getSize() [with T = twipr_firmware_state_t]	1
+core_utils_registermap.h:272:22:register_entry_type core_utils_RegisterEntry<T>::getType() [with T = twipr_firmware_state_t]	1
+core_utils_registermap.h:275:22:register_entry_rw_t core_utils_RegisterEntry<T>::getReadWriteSetting() [with T = twipr_firmware_state_t]	1
+core_utils_registermap.h:220:7:void core_utils_RegisterEntry<T>::write(T) [with T = unsigned char]	2
+core_utils_registermap.h:220:7:void core_utils_RegisterEntry<T>::write(T) [with T = twipr_firmware_state_t]	2
+firmware.cpp:211:1:cpp)	1

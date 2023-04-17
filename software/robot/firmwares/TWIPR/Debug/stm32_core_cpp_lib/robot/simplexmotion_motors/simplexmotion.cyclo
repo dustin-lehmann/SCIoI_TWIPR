@@ -1,0 +1,35 @@
+core_utils_Callback.h:16:2:Callback::Callback()	1
+core_utils_Callback.h:20:15:virtual void Callback::call()	1
+core_utils_Callback.h:24:15:virtual void Callback::call(void*)	1
+core_utils_Callback.h:14:7:constexpr Callback& Callback::operator=(const Callback&)	1
+core_utils_Callback.h:67:7:constexpr core_utils_Callback<void, void>& core_utils_Callback<void, void>::operator=(const core_utils_Callback<void, void>&)	1
+simplexmotion.hpp:78:16:simplexmotion_callbacks::simplexmotion_callbacks()	1
+simplexmotion.cpp:10:1:SimplexMotionMotor::SimplexMotionMotor()	1
+simplexmotion.cpp:15:9:uint8_t SimplexMotionMotor::writeRegisters(uint16_t, uint16_t, uint16_t*)	3
+simplexmotion.cpp:47:9:uint8_t SimplexMotionMotor::readRegisters(uint16_t, uint16_t, uint16_t*)	2
+simplexmotion.cpp:69:9:uint8_t SimplexMotionMotor::init(simplexmotion_config_t)	2
+simplexmotion.cpp:102:6:void SimplexMotionMotor::start(simplexmotion_mode_t)	4
+simplexmotion.cpp:130:9:uint8_t SimplexMotionMotor::startup_check()	5
+simplexmotion.cpp:183:9:uint8_t SimplexMotionMotor::check()	1
+simplexmotion.cpp:188:9:uint8_t SimplexMotionMotor::setMode(simplexmotion_mode_t)	4
+simplexmotion.cpp:216:9:uint8_t SimplexMotionMotor::stop()	1
+simplexmotion.cpp:224:9:uint8_t SimplexMotionMotor::beep(uint16_t)	1
+simplexmotion.cpp:236:9:uint8_t SimplexMotionMotor::reset()	1
+simplexmotion.cpp:242:7:float SimplexMotionMotor::getPosition()	2
+simplexmotion.cpp:256:9:int32_t SimplexMotionMotor::getPositionRaw()	2
+simplexmotion.cpp:271:7:float SimplexMotionMotor::getVoltage()	2
+simplexmotion.cpp:286:7:float SimplexMotionMotor::getSpeed()	2
+simplexmotion.cpp:302:9:uint8_t SimplexMotionMotor::setTorqueLimit(float)	4
+simplexmotion.cpp:332:7:float SimplexMotionMotor::getTorqueLimit()	2
+simplexmotion.cpp:349:7:float SimplexMotionMotor::getTorque()	1
+simplexmotion.cpp:355:9:uint8_t SimplexMotionMotor::setTorque(float)	2
+simplexmotion.cpp:371:9:uint8_t SimplexMotionMotor::setTarget(int32_t)	1
+simplexmotion.cpp:383:9:uint8_t SimplexMotionMotor::getStatus(simplexmotion_status_t*)	2
+simplexmotion.cpp:407:6:void SimplexMotionMotor::registerCallback(simplexmotion_callback_id, core_utils_Callback<void, void>)	2
+simplexmotion.cpp:415:6:void SimplexMotionMotor::error_handler(simplexmotion_error)	1
+core_utils_Callback.h:69:2:core_utils_Callback<R, void>::core_utils_Callback() [with R = void]	1
+core_utils_Callback.h:83:4:R core_utils_Callback<R, void>::call() [with R = void]	1
+core_utils_functionpointer.h:118:2:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:171:7:R core_utils_FunctionPointer<R, void>::operator()() [with R = void]	1
+core_utils_functionpointer.h:136:10:void core_utils_FunctionPointer<R, void>::attach(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:155:7:R core_utils_FunctionPointer<R, void>::call() [with R = void]	5

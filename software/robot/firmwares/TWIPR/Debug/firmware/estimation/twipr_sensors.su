@@ -1,0 +1,11 @@
+c:\work_dir\projects\testbed\software\robots\software_board\libraries\general\stm32_core_cpp_lib\utils\core_utils.h:23:13:void nop()	4	static
+../firmware/estimation/twipr_sensors.cpp:10:1:TWIPR_Sensors::TWIPR_Sensors()	16	static
+../firmware/estimation/twipr_sensors.cpp:15:9:uint8_t TWIPR_Sensors::init(twipr_sensors_config_t)	64	static
+../firmware/estimation/twipr_sensors.cpp:39:6:void TWIPR_Sensors::start()	16	static
+../firmware/estimation/twipr_sensors.cpp:44:9:uint8_t TWIPR_Sensors::check()	24	static
+../firmware/estimation/twipr_sensors.cpp:56:6:void TWIPR_Sensors::update()	16	static
+../firmware/estimation/twipr_sensors.cpp:61:22:twipr_sensors_data_t TWIPR_Sensors::getData()	24	static
+../firmware/estimation/twipr_sensors.cpp:65:24:twipr_sensors_status_t TWIPR_Sensors::getStatus()	16	static
+../firmware/estimation/twipr_sensors.cpp:69:9:uint8_t TWIPR_Sensors::calibrate()	16	static
+../firmware/estimation/twipr_sensors.cpp:76:6:void TWIPR_Sensors::_readImu()	16	static
+../firmware/estimation/twipr_sensors.cpp:83:6:void TWIPR_Sensors::_readMotorSpeed()	24	static

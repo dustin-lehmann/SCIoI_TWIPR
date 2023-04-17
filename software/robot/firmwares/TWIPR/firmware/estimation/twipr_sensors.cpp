@@ -30,6 +30,8 @@ uint8_t TWIPR_Sensors::init(twipr_sensors_config_t config) {
 
 	// Initialize
 
+	this->_config = config;
+
 	this->status = TWIPR_SENSORS_STATUS_IDLE;
 	return 1;
 }
@@ -81,16 +83,10 @@ void TWIPR_Sensors::_readImu() {
 void TWIPR_Sensors::_readMotorSpeed() {
 	// TODO: I probably need some check here if this has been initialized or so
 
-	twipr_drive_speed_t motor_speed = this->drive->getSpeed();
+	twipr_drive_speed_t motor_speed = this->_config.drive->getSpeed();
 
 	this->_data.speed_left = motor_speed.speed_left;
 	this->_data.speed_right = motor_speed.speed_right;
 
+	nop();
 }
-
-/* ======================================================= */
-twipr_logging_sensors_t TWIPR_Sensors::getSample(){
-	twipr_logging_sensors_t sample;
-	sample.data = this->getData();
-}
-

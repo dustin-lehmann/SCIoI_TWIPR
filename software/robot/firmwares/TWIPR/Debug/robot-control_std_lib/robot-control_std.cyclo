@@ -1,0 +1,5 @@
+robot-control_std.cpp:32:6:void robot_control_init()	1
+robot-control_std.cpp:38:6:void robot_control_start()	1
+robot-control_std.cpp:44:6:void robot_control_task(void*)	1
+robot-control_std.cpp:53:1:void __static_initialization_and_destruction_0(int, int)	3
+robot-control_std.cpp:53:1:cpp)	1

@@ -30,8 +30,8 @@ def example_serial_communication():
     comm.registerCallback('rx', rx_callback)
     comm.start()
 
-    x = test_struct(a=99, b = -88888)
-    comm.echo(address=0x0102,value=x, type=test_struct, flag=3)
+    x = test_struct(a=99, b=-88888)
+    comm.echo(address=0x0102, value=x, type=test_struct, flag=3)
     time.sleep(60)
 
     comm.close()
@@ -47,6 +47,7 @@ def example_read():
 
     comm.close()
 
+
 def example_function():
     comm = TWIPR_Communication_STM32()
     comm.start()
@@ -57,7 +58,8 @@ def example_function():
 
     comm.close()
 
+
 if __name__ == '__main__':
-    # example_serial_communication()
+    example_serial_communication()
     # example_read()
-    example_function()
+    # example_function()

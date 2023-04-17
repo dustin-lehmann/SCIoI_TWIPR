@@ -91,7 +91,7 @@ void TWIPR_BalancingControl::reset() {
 /* ========================================================================= */
 void TWIPR_BalancingControl::stop() {
 	this->mode = TWIPR_BALANCING_CONTROL_MODE_OFF;
-	this->status = TWIPR_BALANCING_CONTROL_STATUS_IDLE;
+//	this->status = TWIPR_BALANCING_CONTROL_STATUS_IDLE;
 }
 /* ========================================================================= */
 void TWIPR_BalancingControl::set_K(float K[8]) {

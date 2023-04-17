@@ -1,0 +1,22 @@
+core_utils_Callback.h:16:2:Callback::Callback()	1
+core_utils_Callback.h:20:15:virtual void Callback::call()	1
+core_utils_Callback.h:24:15:virtual void Callback::call(void*)	1
+core_utils_gpio.cpp:13:1:core_utils_GPIO::core_utils_GPIO(GPIO_TypeDef*, uint16_t)	1
+core_utils_gpio.cpp:19:6:void core_utils_GPIO::write(uint8_t)	2
+core_utils_gpio.cpp:28:6:void core_utils_GPIO::toggle()	1
+core_utils_gpio.cpp:33:9:uint8_t core_utils_GPIO::read()	2
+core_utils_gpio.cpp:42:6:void core_utils_gpio_registerExtiCallback(uint16_t, void (*)())	1
+core_utils_Callback.h:14:7:constexpr Callback& Callback::operator=(const Callback&)	1
+core_utils_Callback.h:67:7:constexpr core_utils_Callback<void, void>& core_utils_Callback<void, void>::operator=(const core_utils_Callback<void, void>&)	1
+core_utils_gpio.cpp:48:6:void core_utils_gpio_registerExtiCallback(uint16_t, core_utils_Callback<void, void>)	28
+core_utils_gpio.cpp:120:6:void HAL_GPIO_EXTI_Callback(uint16_t)	1
+core_utils_gpio.cpp:125:13:void execute_gpio_callback(uint16_t)	28
+core_utils_Callback.h:69:2:core_utils_Callback<R, void>::core_utils_Callback() [with R = void]	1
+core_utils_Callback.h:72:2:core_utils_Callback<R, void>::core_utils_Callback(R (*)()) [with R = void]	1
+core_utils_Callback.h:83:4:R core_utils_Callback<R, void>::call() [with R = void]	1
+core_utils_functionpointer.h:118:2:core_utils_FunctionPointer<R, void>::core_utils_FunctionPointer(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:171:7:R core_utils_FunctionPointer<R, void>::operator()() [with R = void]	1
+core_utils_functionpointer.h:136:10:void core_utils_FunctionPointer<R, void>::attach(R (*)()) [with R = void]	1
+core_utils_functionpointer.h:155:7:R core_utils_FunctionPointer<R, void>::call() [with R = void]	5
+core_utils_gpio.cpp:192:1:void __static_initialization_and_destruction_0(int, int)	4
+core_utils_gpio.cpp:192:1:cpp)	1

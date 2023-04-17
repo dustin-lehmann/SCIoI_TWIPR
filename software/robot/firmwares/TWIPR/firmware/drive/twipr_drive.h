@@ -55,10 +55,18 @@ public:
 	void start();
 	void stop();
 	void check();
+	uint8_t startup_check();
 	void update();
 
+	float getVoltage();
+
+	void torqueTaskFunction();
+	void speedTaskFunction();
+
 	void setTorque(twipr_drive_input_t input);
+	void setTorque(float torque_left, float torque_right);
 	twipr_drive_status_t getState();
+
 	twipr_drive_speed_t getSpeed();
 
 	twipr_drive_status_t status = TWIPR_DRIVE_STATUS_IDLE;
@@ -70,8 +78,13 @@ private:
 
 	twipr_drive_config_t _config;
 	twipr_drive_input_t _last_input;
+	twipr_drive_speed_t _speed;
 
 	void _error_handler(uint32_t error);
 };
+
+
+void twipr_drive_torque_task(void* drive);
+void twipr_drive_speed_task(void* drive);
 
 #endif /* DRIVE_TWIPR_DRIVE_H_ */

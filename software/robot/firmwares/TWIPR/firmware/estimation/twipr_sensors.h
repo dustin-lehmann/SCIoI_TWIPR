@@ -24,9 +24,6 @@ typedef struct twipr_sensors_data_t {
 	bmi160_gyr gyr;
 } twipr_sensors_data_t;
 
-typedef struct twipr_logging_sensors_t {
-	twipr_sensors_data_t data;
-} twipr_logging_sensors_t;
 
 typedef enum twipr_sensors_status_t {
 	TWIPR_SENSORS_STATUS_ERROR = -1,
@@ -44,14 +41,12 @@ public:
 	void update();
 	uint8_t calibrate();
 
-	twipr_logging_sensors_t getSample();
 	twipr_sensors_data_t getData();
 	twipr_sensors_status_t getStatus();
 
 	twipr_sensors_status_t status;
 private:
 	BMI160 imu;
-	TWIPR_Drive *drive;
 	void _readImu();
 	void _readMotorSpeed();
 	twipr_sensors_config_t _config;

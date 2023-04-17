@@ -1,0 +1,14 @@
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/ext/madgwick_ahrs/MadgwickAHRS.h:38:10:void Madgwick::begin(float)	16	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/ext/madgwick_ahrs/MadgwickAHRS.h:56:11:float Madgwick::getRollRadians()	16	static
+../firmware/estimation/twipr_estimation.cpp:14:1:TWIPR_Estimation::TWIPR_Estimation()	16	static
+../firmware/estimation/twipr_estimation.cpp:19:6:void TWIPR_Estimation::init(twipr_estimation_config_t)	32	static
+../firmware/estimation/twipr_estimation.cpp:31:6:void TWIPR_Estimation::start()	16	static
+../firmware/estimation/twipr_estimation.cpp:35:6:void TWIPR_Estimation::reset()	16	static
+../firmware/estimation/twipr_estimation.cpp:39:6:void TWIPR_Estimation::task_function()	24	static
+../firmware/estimation/twipr_estimation.cpp:53:6:void TWIPR_Estimation::stop()	16	static
+../firmware/estimation/twipr_estimation.cpp:57:6:void TWIPR_Estimation::update()	72	static
+../firmware/estimation/twipr_estimation.cpp:121:26:twipr_estimation_state_t TWIPR_Estimation::getMeanState()	24	static
+../firmware/estimation/twipr_estimation.cpp:129:26:twipr_estimation_state_t TWIPR_Estimation::getState()	24	static
+../firmware/estimation/twipr_estimation.cpp:136:6:void TWIPR_Estimation::setState(twipr_estimation_state_t)	16	static
+../firmware/estimation/twipr_estimation.cpp:140:28:twipr_logging_estimation_t TWIPR_Estimation::getSample()	80	static
+../firmware/estimation/twipr_estimation.cpp:147:6:void estimation_task(void*)	24	static

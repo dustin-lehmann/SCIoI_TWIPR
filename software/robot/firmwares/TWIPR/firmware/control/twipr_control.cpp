@@ -7,10 +7,18 @@
 
 #include "twipr_control.h"
 
-float twipr_control_default_K[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+//float twipr_control_default_K[8] = { 0.02, 0.045, 0.005, 0.0, 0.02, 0.045, 0.005,
+//		0.0 };
+
+float twipr_control_default_K[8] = { 0.02, 0.04, 0.005, 0.02, 0.02, 0.04, 0.005,
+		-0.02};
 
 static const osThreadAttr_t control_task_attributes = { .name = "control",
-		.stack_size = 512 * 4, .priority = (osPriority_t) osPriorityHigh, };
+		.stack_size = 512 * 4, .priority = (osPriority_t) osPriorityHigh4, };
+
+TWIPR_ControlManager *manager;
+
+osSemaphoreId_t semaphore_external_input;
 
 /* ======================================================== */
 void twipr_control_task(void *argument) {
@@ -25,6 +33,7 @@ TWIPR_ControlManager::TWIPR_ControlManager() {
 
 /* ======================================================== */
 void TWIPR_ControlManager::init(twipr_control_config_t config) {
+	manager = this;
 	this->config = config;
 	this->_estimation = config.estimation;
 
@@ -43,9 +52,10 @@ void TWIPR_ControlManager::init(twipr_control_config_t config) {
 	this->_tick = 0;
 
 	// Setting the Register Entries
-	this->reg_entries.reg_entry_external_input.set(
-	TWIPR_CONTROL_REG_ENTRY_EXT_INPUT, &this->reg_map, &this->_input,
-			REGISTER_ENTRY_READWRITE);
+	this->reg_entries.reg_function_set_external_input.set(
+	TWIPR_CONTROL_REG_ENTRY_EXT_INPUT, &this->reg_map,
+			core_utils_Callback<void, twipr_control_input_t>(this,
+					&TWIPR_ControlManager::setInput));
 
 	this->reg_entries.reg_entry_status.set(
 	TWIPR_CONTROL_REG_ENTRY_STATUS, &this->reg_map, &this->status,
@@ -75,25 +85,31 @@ void TWIPR_ControlManager::init(twipr_control_config_t config) {
 
 	this->reg_entries.reg_function_set_K.set(
 	TWIPR_CONTROL_REG_FUNCTION_SET_K, &this->reg_map,
-			core_utils_Callback<uint8_t, float*>(this,
+			core_utils_Callback<uint8_t, float[8]>(this,
 					&TWIPR_ControlManager::setBalancingGain));
+
+//	semaphore_external_input = osSemaphoreNew(1, 1, NULL);
+
 }
 /* ======================================================== */
 uint8_t TWIPR_ControlManager::start() {
 
 	osThreadNew(twipr_control_task, (void*) this, &control_task_attributes);
-
 	return 1;
 }
 
 /* ======================================================== */
 void TWIPR_ControlManager::task_function() {
+	this->status = TWIPR_CONTROL_STATUS_RUNNING;
+	this->config.drive->start();
+	this->_balancing_control.start();
+
 	this->_task = xTaskGetCurrentTaskHandle();
 	uint32_t global_tick;
 
 	while (true) {
 		global_tick = osKernelGetTickCount();
-		this->_step();
+		this->step();
 		osDelayUntil(global_tick + 1000.0 / (float) this->config.freq);
 	}
 }
@@ -105,8 +121,10 @@ void TWIPR_ControlManager::stop() {
 	this->_balancing_control.stop();
 
 	// Set the own state to idle
-	this->status = TWIPR_CONTROL_STATUS_IDLE;
 	this->mode = TWIPR_CONTROL_MODE_OFF;
+
+	// Stop the drive
+	this->config.drive->stop();
 
 	// Set the input to 0
 	this->_input.u_1 = 0.0;
@@ -133,9 +151,9 @@ void TWIPR_ControlManager::newTrajectoryReceived_callback(uint16_t len) {
 					* TWIPR_CONTROL_TRAJECTORY_BUFFER_SIZE);
 }
 /* ======================================================== */
-void TWIPR_ControlManager::_step() {
-
+void TWIPR_ControlManager::step() {
 	// Read the state from the estimator
+	HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_8);
 	this->_dynamic_state = this->_estimation->getState();
 
 	// Check for errors
@@ -187,6 +205,8 @@ void TWIPR_ControlManager::_step() {
 		}
 	}
 
+	this->_tick++;
+
 }
 /* ======================================================== */
 uint8_t TWIPR_ControlManager::setMode(twipr_control_mode_t mode) {
@@ -208,18 +228,29 @@ uint8_t TWIPR_ControlManager::setMode(twipr_control_mode_t mode) {
 	// Switch the mode of the balancing controller to the appropriate mode
 	switch (this->mode) {
 	case TWIPR_CONTROL_MODE_OFF: {
-		this->_balancing_control.setMode(TWIPR_BALANCING_CONTROL_MODE_OFF);
+		this->stop();
 		break;
 	}
 	case TWIPR_CONTROL_MODE_DIRECT: {
+		if (this->config.drive->status != TWIPR_DRIVE_STATUS_RUNNING) {
+			this->config.drive->start();
+		}
+
 		this->_balancing_control.setMode(TWIPR_BALANCING_CONTROL_MODE_DIRECT);
 		break;
 	}
 	case TWIPR_CONTROL_MODE_BALANCING: {
+		if (this->config.drive->status != TWIPR_DRIVE_STATUS_RUNNING) {
+			this->config.drive->start();
+		}
 		this->_balancing_control.setMode(TWIPR_BALANCING_CONTROL_MODE_ON);
+		this->_sum_theta = 0;
 		break;
 	}
 	case TWIPR_CONTROL_MODE_TRAJECTORY: {
+		if (this->config.drive->status != TWIPR_DRIVE_STATUS_RUNNING) {
+			this->config.drive->start();
+		}
 		this->_balancing_control.setMode(TWIPR_BALANCING_CONTROL_MODE_ON);
 		break;
 	}
@@ -229,6 +260,7 @@ uint8_t TWIPR_ControlManager::setMode(twipr_control_mode_t mode) {
 	this->_input.u_1 = 0;
 	this->_input.u_2 = 0;
 
+
 	return 1;
 }
 /* ======================================================== */
@@ -237,10 +269,13 @@ void TWIPR_ControlManager::setInput(twipr_control_input_t input) {
 	if (this->status != TWIPR_CONTROL_STATUS_RUNNING) {
 		return;
 	}
-	if (this->mode == TWIPR_CONTROL_MODE_OFF) {
+	if (this->mode == TWIPR_CONTROL_MODE_OFF || this->mode == TWIPR_CONTROL_MODE_TRAJECTORY) {
 		return;
 	}
+
+	osSemaphoreAcquire(semaphore_external_input, portMAX_DELAY);
 	this->_input = input;
+	osSemaphoreRelease(semaphore_external_input);
 }
 /* ======================================================== */
 twipr_control_status_t TWIPR_ControlManager::getStatus() {
@@ -307,7 +342,6 @@ void TWIPR_ControlManager::_step_off() {
 	this->_input.u_2 = 0.0;
 	this->_output.u_left = 0.0;
 	this->_output.u_right = 0.0;
-
 	this->_setTorque(this->_output);
 }
 /* ======================================================== */
@@ -338,14 +372,31 @@ void TWIPR_ControlManager::_step_error() {
 /* ======================================================== */
 void TWIPR_ControlManager::_step_balancing() {
 	//	 Calculate the input from the balancing controller
-	twipr_balancing_control_input_t balancing_input = { .u_1 = this->_input.u_1,
-			.u_2 = this->_input.u_2 };
+
+	osSemaphoreAcquire(semaphore_external_input, portMAX_DELAY);
+	twipr_control_input_t external_input = this->_input;
+	osSemaphoreRelease(semaphore_external_input);
+
+	twipr_balancing_control_input_t balancing_input = { .u_1 = external_input.u_1,
+			.u_2 = external_input.u_2 };
 
 	twipr_balancing_control_output_t balancing_output;
 
 	// Update the balancing controller
 	this->_balancing_control.update(this->_dynamic_state, balancing_input,
 			&balancing_output);
+
+	this->_sum_theta += this->_dynamic_state.theta;
+	this->_sum_v += this->_dynamic_state.v;
+
+	float theta_ouput_int = this->_sum_theta * 0.000;
+	float v_ouput_int = this->_sum_v * (0.0);
+
+	theta_ouput_int = limit(theta_ouput_int, 0.004);
+	v_ouput_int = limit(v_ouput_int, 0.02);
+
+	balancing_output.u_1 = balancing_output.u_1 + theta_ouput_int + v_ouput_int;
+	balancing_output.u_2 = balancing_output.u_2 + theta_ouput_int + v_ouput_int;
 
 	this->_output.u_left = limit(balancing_output.u_1, this->config.max_torque);
 	this->_output.u_right = limit(balancing_output.u_2,
@@ -395,7 +446,7 @@ void TWIPR_ControlManager::_setTorque(twipr_control_output_t output) {
 	twipr_drive_input_t drive_input = { .torque_left = output.u_left,
 			.torque_right = output.u_right };
 
-	this->_drive->setTorque(drive_input);
+	this->config.drive->setTorque(drive_input);
 }
 /* ======================================================== */
 void TWIPR_ControlManager::registerCallback(
@@ -446,12 +497,12 @@ void TWIPR_ControlManager::registerCallback(
 /* ======================================================== */
 void TWIPR_ControlManager::_trajectoryFinished() {
 
-	// Set the mode back to balancing
-	this->mode = TWIPR_CONTROL_MODE_BALANCING;
-
 	// Reset the external input
 	this->_input.u_1 = 0;
 	this->_input.u_2 = 0;
+
+	// Set the mode back to balancing
+	this->mode = TWIPR_CONTROL_MODE_BALANCING;
 
 	if (this->_callbacks.trajectory_finished.registered) {
 		this->_callbacks.trajectory_finished.call(this->_trajectory.length);

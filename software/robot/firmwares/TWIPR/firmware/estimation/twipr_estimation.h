@@ -13,7 +13,7 @@
 #include "simplexmotion.hpp"
 #include "twipr_sensors.h"
 
-#define TWIPR_ESTIMATION_FREQUENCY 200
+#define TWIPR_ESTIMATION_FREQUENCY 100
 #define TWIPR_ESTIMATION_STATE_BUFFER_SIZE TWIPR_ESTIMATION_FREQUENCY*1
 
 typedef enum twipr_estimation_status_t {
@@ -46,14 +46,17 @@ typedef struct twipr_estimation_callbacks {
 } twipr_estimation_callbacks;
 
 typedef struct twipr_estimation_config_t {
-	TWIPR_Sensors *sensors;
+	TWIPR_Drive* drive;
+//	TWIPR_Sensors *sensors;
 	bool enable_slip_detection;
 	bool enable_angle_threshold;
 	float angle_threshold;
+	twipr_model_t model;
 } twipr_estimation_config_t;
 
 typedef struct twipr_logging_estimation_t {
 	twipr_estimation_state_t state;
+	twipr_sensors_data_t data;
 } twipr_logging_estimation_t;
 
 class TWIPR_Estimation {
@@ -80,13 +83,12 @@ public:
 
 	twipr_estimation_status_t getStatus();
 
-	twipr_model *model;
 	twipr_estimation_status_t status;
 	twipr_estimation_state_t state;
 	twipr_estimation_state_t mean_state;
 	twipr_estimation_config_t config;
 private:
-	TWIPR_Sensors *_sensors;
+	TWIPR_Sensors _sensors;
 	uint16_t _freq;
 	twipr_estimation_state_t _state_buffer[TWIPR_ESTIMATION_STATE_BUFFER_SIZE];
 	uint16_t _state_buffer_index = 0;

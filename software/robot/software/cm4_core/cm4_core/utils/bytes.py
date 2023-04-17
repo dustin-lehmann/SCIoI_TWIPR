@@ -2,8 +2,21 @@ def bytes_(val: int):
     assert (val < 2e8)
     return bytes([val])
 
+
+def byteArrayToInt(b: (list, bytearray, bytes)):
+    if isinstance(b, list):
+        b = bytes(b)
+    assert (isinstance(b, (list, bytes, bytearray)))
+    return int.from_bytes(b, 'big')
+
+
 def intToByte(i: int, num_bytes):
     return i.to_bytes(length=num_bytes, byteorder='big')
+
+
+def intToByteList(i: int, num_bytes):
+    return list(intToByte(i, num_bytes))
+
 
 def setBit(number, bit):
     assert (number < 2e8)

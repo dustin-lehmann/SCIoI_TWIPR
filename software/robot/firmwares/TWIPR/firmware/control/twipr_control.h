@@ -93,13 +93,13 @@ typedef struct twipr_control_callbacks_t {
 #define TWIPR_CONTROL_REG_FUNCTION_SET_K 0x08
 
 typedef struct twipr_control_reg_entries_t {
-	core_utils_RegisterEntry<twipr_control_input_t> reg_entry_external_input;
+	core_utils_RegisterFunction<void, twipr_control_input_t> reg_function_set_external_input;
 	core_utils_RegisterEntry<twipr_control_status_t> reg_entry_status;
 	core_utils_RegisterEntry<twipr_control_mode_t> reg_entry_mode;
 	core_utils_RegisterFunction<uint8_t, twipr_control_mode_t> reg_function_set_mode;
 	core_utils_RegisterFunction<uint8_t, twipr_control_trajectory_t> reg_function_start_trajectory;
 	core_utils_RegisterFunction<void, void> reg_function_stop;
-	core_utils_RegisterFunction<uint8_t, float*> reg_function_set_K;
+	core_utils_RegisterFunction<uint8_t, float[8]> reg_function_set_K;
 	core_utils_RegisterEntry<twipr_control_config_t> reg_entry_config;
 } twipr_control_reg_entries_t;
 
@@ -150,6 +150,8 @@ public:
 
 	twipr_control_trajectory_input_t trajectory_rx_buffer[TWIPR_CONTROL_TRAJECTORY_BUFFER_SIZE];
 
+	void step();
+
 private:
 	TWIPR_BalancingControl _balancing_control;
 
@@ -166,13 +168,12 @@ private:
 //	twipr_estimation_state_t _last_dynamic_state;
 
 	TWIPR_Estimation *_estimation;
-	TWIPR_Drive *_drive;
 
 	TaskHandle_t _task;
 	twipr_control_callbacks_t _callbacks;
 	uint32_t _tick;
 
-	void _step();
+
 
 	void _step_balancing();
 	void _step_off();
@@ -181,6 +182,9 @@ private:
 	void _step_trajectory();
 	void _step_direct();
 
+
+	float _sum_theta = 0;
+	float _sum_v = 0;
 
 
 	void _trajectoryFinished();

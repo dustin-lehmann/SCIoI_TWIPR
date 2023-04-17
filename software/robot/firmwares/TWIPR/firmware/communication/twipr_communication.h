@@ -19,6 +19,10 @@
 #define TWIPR_COMM_ERROR_FLAG_LEN 0x05
 #define TWIPR_COMM_ERROR_FLAG_MSG_TYPE 0x06
 
+
+#define SPI_PIN_GPIOx GPIOB
+#define SPI_PIN_PIN GPIO_PIN_2
+
 typedef enum twipr_communication_callback_id_t {
 	TWIPR_COMM_CALLBACK_NEW_TRAJECTORY,
 } twipr_communication_callback_id_t;
@@ -30,7 +34,7 @@ typedef struct twipr_communication_callbacks_t {
 typedef struct twipr_communication_config_t {
 	UART_HandleTypeDef *huart;
 	SPI_HandleTypeDef *hspi;
-	core_utils_GPIO notification_gpio;
+	core_utils_GPIO notification_gpio_tx;
 	RegisterMap *reg_map_control;
 	RegisterMap *reg_map_general;
 	twipr_logging_sample_t *sample_tx_buffer;
@@ -50,6 +54,10 @@ public:
 	void registerCallback(twipr_communication_callback_id_t callback_id, core_utils_Callback<void, uint16_t> callback);
 
 	void sampleBufferFull();
+
+
+	void resetUART();
+	void spi_pin_callback();
 
 	twipr_communication_config_t config;
 	TWIPR_UART_Communication uart_interface;

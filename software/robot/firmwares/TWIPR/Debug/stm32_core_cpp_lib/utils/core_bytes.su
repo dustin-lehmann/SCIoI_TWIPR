@@ -1,0 +1,6 @@
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_bytes.cpp:10:7:float bytearray_to_float(uint8_t*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_bytes.cpp:17:10:uint16_t uint8_to_uint16(uint8_t, uint8_t)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_bytes.cpp:22:10:uint16_t bytearray_to_uint16(uint8_t*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_bytes.cpp:27:9:int16_t bytearray_to_int16(uint8_t*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_bytes.cpp:37:9:int16_t bytearray_to_uint32(uint8_t*)	24	static
+C:/work_dir/projects/testbed/software/robots/software_board/libraries/general/stm32_core_cpp_lib/utils/core_bytes.cpp:45:6:void float_to_bytearray(float, uint8_t*)	24	static

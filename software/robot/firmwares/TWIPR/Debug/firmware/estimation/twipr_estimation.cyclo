@@ -1,0 +1,14 @@
+MadgwickAHRS.h:38:10:void Madgwick::begin(float)	1
+MadgwickAHRS.h:56:11:float Madgwick::getRollRadians()	2
+twipr_estimation.cpp:14:1:TWIPR_Estimation::TWIPR_Estimation()	1
+twipr_estimation.cpp:19:6:void TWIPR_Estimation::init(twipr_estimation_config_t)	1
+twipr_estimation.cpp:31:6:void TWIPR_Estimation::start()	1
+twipr_estimation.cpp:35:6:void TWIPR_Estimation::reset()	1
+twipr_estimation.cpp:39:6:void TWIPR_Estimation::task_function()	1
+twipr_estimation.cpp:53:6:void TWIPR_Estimation::stop()	1
+twipr_estimation.cpp:57:6:void TWIPR_Estimation::update()	2
+twipr_estimation.cpp:121:26:twipr_estimation_state_t TWIPR_Estimation::getMeanState()	1
+twipr_estimation.cpp:129:26:twipr_estimation_state_t TWIPR_Estimation::getState()	1
+twipr_estimation.cpp:136:6:void TWIPR_Estimation::setState(twipr_estimation_state_t)	1
+twipr_estimation.cpp:140:28:twipr_logging_estimation_t TWIPR_Estimation::getSample()	1
+twipr_estimation.cpp:147:6:void estimation_task(void*)	1
